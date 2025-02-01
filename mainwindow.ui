@@ -66,9 +66,9 @@ border: none;</string>
      <widget class="QLineEdit" name="usuario">
       <property name="geometry">
        <rect>
-        <x>320</x>
+        <x>330</x>
         <y>400</y>
-        <width>901</width>
+        <width>891</width>
         <height>51</height>
        </rect>
       </property>
@@ -78,12 +78,12 @@ font: 75 14pt &quot;Segoe UI&quot;;
 border: none;</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_2">
+     <widget class="QLineEdit" name="password">
       <property name="geometry">
        <rect>
-        <x>320</x>
+        <x>330</x>
         <y>510</y>
-        <width>901</width>
+        <width>891</width>
         <height>51</height>
        </rect>
       </property>

@@ -9,13 +9,21 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    cuentaplantilla.cpp \
+    UsuarioRegistro.cpp \
+    clasesplantilla.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    manejocuentas.cpp \
+    usuarioalumno.cpp \
+    usuariomaestro.cpp
 
 HEADERS += \
-    cuentaplantilla.h \
-    mainwindow.h
+    UsuarioRegistro.h \
+    clasesplantilla.h \
+    mainwindow.h \
+    manejocuentas.h \
+    usuarioalumno.h \
+    usuariomaestro.h
 
 FORMS += \
     mainwindow.ui

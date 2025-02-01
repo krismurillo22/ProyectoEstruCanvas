@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QScreen>
+#include <QMessageBox>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -19,6 +21,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(1);
+
+    if (!ui->usuario->text().isEmpty() && !ui->password->text().isEmpty()){
+        ui->stackedWidget->setCurrentIndex(1);
+    }else{
+        QMessageBox::warning(this, "Advertencia", "Se debe de ingresar ambos datos.");
+    }
+
 }
 
