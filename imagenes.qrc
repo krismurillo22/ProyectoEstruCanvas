@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Fondos/Ingresar.png</file>
+        <file>Fondos/Menu Alumno.png</file>
+        <file>Fondos/Menu Maestro.png</file>
+        <file>Fondos/Menu Registro.png</file>
+    </qresource>
+</RCC>
