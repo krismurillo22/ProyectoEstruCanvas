@@ -21,11 +21,31 @@ public:
 private slots:
     void on_pushButton_clicked();
 
+    void on_cerrarRegistro_clicked();
+
+    void on_cerrarMaestro_clicked();
+
+    void on_cerrarAlumno_clicked();
+
+    void on_registrarMaestro_clicked();
+
+    void on_registrarAlumnos_clicked();
+
+    void on_registrarClases_clicked();
+
+    void on_registrarAsignar_clicked();
+
+    void on_agregarMaestro_clicked();
+
+    void on_modificarMaestro_clicked();
+
+    void on_eliminarMaestro_clicked();
+
 private:
     Ui::MainWindow *ui;
 
-    usuarioAlumno alumnoDefault;
-    usuarioMaestro maestroDefault;
-    UsuarioRegistro registroDefault;
+    //usuarioAlumno alumnoDefault;
+    //usuarioMaestro maestroDefault;
+    //UsuarioRegistro registroDefault;
 };
 #endif // MAINWINDOW_H

@@ -209,7 +209,7 @@ border: none;</string>
        </rect>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="page"/>
       <widget class="QWidget" name="page_2">
@@ -418,6 +418,18 @@ font: 75 16pt &quot;Segoe UI&quot;;</string>
         </property>
        </widget>
       </widget>
+     </widget>
+     <widget class="QStackedWidget" name="formularioRegistro">
+      <property name="geometry">
+       <rect>
+        <x>230</x>
+        <y>100</y>
+        <width>1311</width>
+        <height>761</height>
+       </rect>
+      </property>
+      <widget class="QWidget" name="page_6"/>
+      <widget class="QWidget" name="page_7"/>
      </widget>
     </widget>
     <widget class="QWidget" name="cerrarRegistro_2">

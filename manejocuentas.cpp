@@ -11,17 +11,17 @@ manejoCuentas::manejoCuentas()
 QString manejoCuentas::validarUsuario(const QString &usuario, const QString &password) {
     QString tipoCuenta = validarEnArchivo("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_registro.dat", usuario, password);
         if (!tipoCuenta.isEmpty()) {
-            return tipoCuenta;
+            return "registro";
         }
 
         tipoCuenta = validarEnArchivo("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_maestros.mad", usuario, password);
         if (!tipoCuenta.isEmpty()) {
-            return tipoCuenta;
+            return "maestro";
         }
 
         tipoCuenta = validarEnArchivo("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_alumnos.alm", usuario, password);
         if (!tipoCuenta.isEmpty()) {
-            return tipoCuenta;
+            return "alumno";
         }
         return "";
 }
