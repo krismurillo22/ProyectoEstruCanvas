@@ -3,6 +3,10 @@
         <file>Fondos/Ingresar.png</file>
         <file>Fondos/Menu Alumno.png</file>
         <file>Fondos/Menu Maestro.png</file>
+        <file>Fondos/FormularioRegistro.png</file>
         <file>Fondos/Menu Registro.png</file>
+        <file>Fondos/FormularioAlumnos.png</file>
+        <file>Fondos/FormularioClases.png</file>
+        <file>Fondos/FormularioCRegistro.png</file>
     </qresource>
 </RCC>

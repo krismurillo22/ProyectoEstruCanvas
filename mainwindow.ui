@@ -75,7 +75,8 @@ border: none;</string>
       <property name="styleSheet">
        <string notr="true">background: transparent;
 font: 75 14pt &quot;Segoe UI&quot;;
-border: none;</string>
+border: none;
+color: rgb(8, 19, 110);</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="password">
@@ -90,7 +91,8 @@ border: none;</string>
       <property name="styleSheet">
        <string notr="true">background: transparent;
 font: 75 14pt &quot;Segoe UI&quot;;
-border: none;</string>
+border: none;
+color: rgb(8, 19, 110);</string>
       </property>
      </widget>
     </widget>
@@ -118,9 +120,9 @@ border: none;</string>
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>790</y>
+        <y>800</y>
         <width>231</width>
-        <height>71</height>
+        <height>61</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -135,9 +137,9 @@ border: none;</string>
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>170</y>
+        <y>270</y>
         <width>231</width>
-        <height>161</height>
+        <height>131</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -152,26 +154,9 @@ border: none;</string>
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>330</y>
+        <y>400</y>
         <width>231</width>
-        <height>151</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background: transparent;
-border: none;</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="registrarClases">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>480</y>
-        <width>231</width>
-        <height>161</height>
+        <height>131</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -186,9 +171,9 @@ border: none;</string>
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>640</y>
+        <y>670</y>
         <width>231</width>
-        <height>151</height>
+        <height>131</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -209,7 +194,7 @@ border: none;</string>
        </rect>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="page"/>
       <widget class="QWidget" name="page_2">
@@ -418,9 +403,280 @@ font: 75 16pt &quot;Segoe UI&quot;;</string>
         </property>
        </widget>
       </widget>
+      <widget class="QWidget" name="page_7">
+       <widget class="QPushButton" name="agregarRegistro">
+        <property name="geometry">
+         <rect>
+          <x>-10</x>
+          <y>0</y>
+          <width>441</width>
+          <height>101</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(6, 6, 92);
+color: white;
+font: 75 16pt &quot;Segoe UI&quot;;</string>
+        </property>
+        <property name="text">
+         <string>Agregar registro</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="modificarRegistro">
+        <property name="geometry">
+         <rect>
+          <x>430</x>
+          <y>0</y>
+          <width>441</width>
+          <height>101</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgba(8, 19, 110, 1);
+color: white;
+font: 75 16pt &quot;Segoe UI&quot;;</string>
+        </property>
+        <property name="text">
+         <string>Modificar registro</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="eliminarRegistro">
+        <property name="geometry">
+         <rect>
+          <x>870</x>
+          <y>0</y>
+          <width>441</width>
+          <height>101</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(6, 6, 92);
+color: white;
+font: 75 16pt &quot;Segoe UI&quot;;</string>
+        </property>
+        <property name="text">
+         <string>Eliminar registro</string>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+     <widget class="QStackedWidget" name="formularioRegistro">
+      <property name="geometry">
+       <rect>
+        <x>230</x>
+        <y>100</y>
+        <width>1311</width>
+        <height>761</height>
+       </rect>
+      </property>
+      <widget class="QWidget" name="page_6"/>
+      <widget class="QWidget" name="maestros">
+       <widget class="QLabel" name="label_5">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>1311</width>
+          <height>771</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="imagenes.qrc">:/Fondos/FormularioRegistro.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="idMaestro">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>140</y>
+          <width>401</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: transparent;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="rolMaestro">
+        <property name="geometry">
+         <rect>
+          <x>510</x>
+          <y>140</y>
+          <width>711</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: transparent;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="nombreMaestro">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>260</y>
+          <width>1131</width>
+          <height>61</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: transparent;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="profesionMaestro">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>390</y>
+          <width>501</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: transparent;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="sueldoMaestro">
+        <property name="geometry">
+         <rect>
+          <x>630</x>
+          <y>390</y>
+          <width>601</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: transparent;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="userMaestro">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>510</y>
+          <width>501</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: transparent;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="passwordMaestro">
+        <property name="geometry">
+         <rect>
+          <x>630</x>
+          <y>510</y>
+          <width>601</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: transparent;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="aceptarMaestro">
+        <property name="geometry">
+         <rect>
+          <x>80</x>
+          <y>610</y>
+          <width>1141</width>
+          <height>61</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: transparent;
+border: none;</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QLabel" name="tituloMaestro">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>40</y>
+          <width>1311</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(8, 19, 110);
+font: 87 24pt &quot;Segoe UI Black&quot;;</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+     <widget class="QPushButton" name="registrarClases">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>530</y>
+        <width>231</width>
+        <height>141</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background: transparent;
+border: none;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="registrarRegistro">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>130</y>
+        <width>231</width>
+        <height>131</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background: transparent;
+border: none;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="cerrarRegistro_2">
+    <widget class="QWidget" name="maestro">
      <widget class="QLabel" name="label_3">
       <property name="geometry">
        <rect>

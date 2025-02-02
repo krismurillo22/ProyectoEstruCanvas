@@ -41,6 +41,14 @@ private slots:
 
     void on_eliminarMaestro_clicked();
 
+    void on_agregarClase_clicked();
+
+    void on_aceptarMaestro_clicked();
+
+    void on_registrarRegistro_clicked();
+
+    void on_agregarRegistro_clicked();
+
 private:
     Ui::MainWindow *ui;
 

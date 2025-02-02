@@ -79,34 +79,105 @@ void MainWindow::on_registrarMaestro_clicked()
 void MainWindow::on_registrarAlumnos_clicked()
 {
     ui->submenuRegistro->setCurrentIndex(2);
+    ui->formularioRegistro->setCurrentIndex(0);
 }
 
 
 void MainWindow::on_registrarClases_clicked()
 {
     ui->submenuRegistro->setCurrentIndex(3);
+    ui->formularioRegistro->setCurrentIndex(0);
 }
 
 
 void MainWindow::on_registrarAsignar_clicked()
 {
     ui->submenuRegistro->setCurrentIndex(4);
+    ui->formularioRegistro->setCurrentIndex(0);
 }
 
 
 void MainWindow::on_agregarMaestro_clicked()
 {
-
+    ui->formularioRegistro->setCurrentIndex(1);
+    ui->tituloMaestro->setText("AGREGAR MAESTRO");
 }
 
 
 void MainWindow::on_modificarMaestro_clicked()
 {
-
+    ui->formularioRegistro->setCurrentIndex(1);
+    ui->tituloMaestro->setText("MODIFICAR MAESTRO");
 }
 
 
 void MainWindow::on_eliminarMaestro_clicked()
+{
+
+}
+
+
+void MainWindow::on_agregarClase_clicked()
+{
+
+}
+
+
+void MainWindow::on_aceptarMaestro_clicked()
+{
+    if (ui->tituloMaestro->text()=="AGREGAR MAESTRO"){
+        QString id= ui->idMaestro->text();
+        QString nombre= ui->nombreMaestro->text();
+        QString profesion= ui->profesionMaestro->text();
+        QString user= ui->userMaestro->text();
+        QString password=ui->passwordMaestro->text();
+        QString rol= ui->rolMaestro->text();
+        QString sueldoTexto = ui->sueldoMaestro->text();
+
+        if (id.isEmpty() || nombre.isEmpty() || profesion.isEmpty() || user.isEmpty() ||
+            password.isEmpty() || rol.isEmpty() || sueldoTexto.isEmpty()) {
+            QMessageBox::warning(this, "Error", "Todos los campos deben estar llenos.");
+            return;
+        }
+
+        //para saber si se convirtio bien
+        bool ok;
+        float sueldo = sueldoTexto.toFloat(&ok);
+        if (!ok) {
+            QMessageBox::warning(this, "Error", "El sueldo ingresado no es válido.");
+            return;
+        }
+
+        manejoCuentas manejo;
+        if (manejo.existeUsuario(id, user, "maestro")) {
+            QMessageBox::warning(this, "Error", "El usuario o ID ya existen en el sistema.");
+            return;
+        }
+        usuarioMaestro maestroNuevo(true, id, nombre, profesion, sueldo, user, password, rol);
+        maestroNuevo.guardar();
+        QMessageBox::information(this, "Éxito", "Maestro agregado correctamente.");
+
+        ui->idMaestro->clear();
+        ui->nombreMaestro->clear();
+        ui->profesionMaestro->clear();
+        ui->userMaestro->clear();
+        ui->passwordMaestro->clear();
+        ui->rolMaestro->clear();
+        ui->sueldoMaestro->clear();
+
+    }else if(ui->tituloMaestro->text()=="MODIFICAR MAESTRO"){
+
+    }
+}
+
+
+void MainWindow::on_registrarRegistro_clicked()
+{
+    ui->submenuRegistro->setCurrentIndex(5);
+}
+
+
+void MainWindow::on_agregarRegistro_clicked()
 {
 
 }
