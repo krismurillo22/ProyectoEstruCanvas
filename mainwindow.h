@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "usuarioalumno.h"
+#include "usuariomaestro.h"
+#include "UsuarioRegistro.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -20,5 +23,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    usuarioAlumno alumnoDefault;
+    usuarioMaestro maestroDefault;
+    UsuarioRegistro registroDefault;
 };
 #endif // MAINWINDOW_H

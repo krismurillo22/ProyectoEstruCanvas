@@ -1,7 +1,11 @@
 #include "clasesplantilla.h"
 
-clasesPlantilla::clasesPlantilla(QString id, QString nombre, QString hora, int uv, int semestre, int periodo, int year)
-    : id_(id), nombre_(nombre), hora_(hora), uv_(uv), semestre_(semestre), periodo_(periodo), year_(year) {}
+clasesPlantilla::clasesPlantilla(bool activo, QString id, QString nombre, QString hora, int uv, int semestre, int periodo, int year)
+    : activo_(activo), id_(id), nombre_(nombre), hora_(hora), uv_(uv), semestre_(semestre), periodo_(periodo), year_(year) {}
+
+bool clasesPlantilla::getActivo() const{
+    return activo_;
+}
 
 QString clasesPlantilla::getID() const {
     return id_;
