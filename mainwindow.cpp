@@ -3,6 +3,7 @@
 #include <QScreen>
 #include <QMessageBox>
 #include "manejocuentas.h"
+#include <QInputDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -106,8 +107,24 @@ void MainWindow::on_agregarMaestro_clicked()
 
 void MainWindow::on_modificarMaestro_clicked()
 {
-    ui->formularioRegistro->setCurrentIndex(1);
-    ui->tituloMaestro->setText("MODIFICAR MAESTRO");
+    manejoCuentas lista;
+        QList<Maestro> maestrosLista = lista.obtenerListaMaestros();  // Ahora devuelve QList<Maestro>
+
+        QStringList nombresMaestros;
+        for (const auto &maestro : maestrosLista) {  // Evita copia innecesaria con const auto &
+            nombresMaestros.append(maestro.nombre);
+        }
+
+        bool ok;
+        QString maestroSeleccionado = QInputDialog::getItem(nullptr, "Seleccionar Maestro",
+                                                            "Elige el maestro que desea modificar:",
+                                                            nombresMaestros, 0, false, &ok);
+
+        if (ok && !maestroSeleccionado.isEmpty()) {
+            ui->formularioRegistro->setCurrentIndex(1);
+            ui->tituloMaestro->setText("MODIFICAR MAESTRO");
+        }
+
 }
 
 
@@ -119,7 +136,7 @@ void MainWindow::on_eliminarMaestro_clicked()
 
 void MainWindow::on_agregarClase_clicked()
 {
-
+    ui->formularioRegistro->setCurrentIndex(4);
 }
 
 
@@ -179,6 +196,15 @@ void MainWindow::on_registrarRegistro_clicked()
 
 void MainWindow::on_agregarRegistro_clicked()
 {
-
+    ui->formularioRegistro->setCurrentIndex(2);
 }
+
+
+void MainWindow::on_agregarAlumno_clicked()
+{
+    ui->formularioRegistro->setCurrentIndex(3);
+}
+
+
+
 

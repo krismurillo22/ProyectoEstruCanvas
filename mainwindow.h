@@ -49,6 +49,8 @@ private slots:
 
     void on_agregarRegistro_clicked();
 
+    void on_agregarAlumno_clicked();
+
 private:
     Ui::MainWindow *ui;
 

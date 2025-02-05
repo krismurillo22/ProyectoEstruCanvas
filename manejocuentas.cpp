@@ -112,3 +112,27 @@ bool manejoCuentas::validarEnArchivoUsuario(const QString &archivo, const QStrin
     file.close();
     return false;
 }
+
+QList<Maestro> manejoCuentas::obtenerListaMaestros() {
+    QList<Maestro> listaMaestros;
+    QFile file("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_maestros.mad");
+
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Error al abrir el archivo de maestros.";
+        return listaMaestros;
+    }
+
+    QDataStream in(&file);
+    while (!in.atEnd()) {
+        Maestro maestro;
+        in >> maestro.activo >> maestro.id >> maestro.nombre >> maestro.profesion
+           >> maestro.sueldo >> maestro.usuario >> maestro.password >> maestro.rol;
+
+        if (maestro.activo) {
+            listaMaestros.append(maestro);
+        }
+    }
+
+    file.close();
+    return listaMaestros;
+}
