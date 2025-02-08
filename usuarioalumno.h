@@ -17,8 +17,9 @@ public:
     QString getUser() const;
     QString getPassword() const;
     QString getRol() const;
-    void guardar();
-    void cargarUsuarios();
+    void cargar(QDataStream& in);
+    void guardar(QDataStream& out) const;
+
 private:
     bool activo_;
     QString cuenta_;

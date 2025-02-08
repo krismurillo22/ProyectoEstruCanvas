@@ -1,138 +1,150 @@
 #include "manejocuentas.h"
+#include "UsuarioRegistro.h"
+#include "usuarioalumno.h"
+#include "usuariomaestro.h"
 #include <QFile>
 #include <QDataStream>
 #include <QDebug>
+#include <typeinfo>
 
-manejoCuentas::manejoCuentas()
-{
 
-}
-//esto es para ingresar y que de su tipo de cuenta
-QString manejoCuentas::validarUsuario(const QString &usuario, const QString &password) {
-    QString tipoCuenta = validarEnArchivo("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_registro.dat", usuario, password);
-        if (!tipoCuenta.isEmpty()) {
-            return "registro";
-        }
-
-        tipoCuenta = validarEnArchivo("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_maestros.mad", usuario, password);
-        if (!tipoCuenta.isEmpty()) {
-            return "maestro";
-        }
-
-        tipoCuenta = validarEnArchivo("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_alumnos.alm", usuario, password);
-        if (!tipoCuenta.isEmpty()) {
-            return "alumno";
-        }
-        return "";
+manejoCuentas::manejoCuentas() {
+    qDebug() << "Constructor de manejoCuentas llamado";
+    cargarUsuarios(archivoMaestros, maestros);
+    cargarUsuarios(archivoRegistros, registros);
+    cargarUsuarios(archivoAlumnos, alumnos);
 }
 
-QString manejoCuentas::validarEnArchivo(const QString &archivo, const QString &usuario, const QString &password) {
+manejoCuentas::~manejoCuentas() {
+    qDebug() << "Destructor de manejoCuentas llamado";
+    guardarUsuarios(archivoMaestros, maestros);
+    guardarUsuarios(archivoRegistros, registros);
+    guardarUsuarios(archivoAlumnos, alumnos);
+}
+
+void manejoCuentas::agregarMaestro(const usuarioMaestro& maestro) {
+    maestros.push_back(maestro);
+}
+
+void manejoCuentas::agregarRegistro(const UsuarioRegistro& registro) {
+    registros.push_back(registro);
+}
+
+void manejoCuentas::agregarAlumno(const usuarioAlumno& alumno) {
+    alumnos.push_back(alumno);
+}
+
+std::vector<usuarioMaestro>& manejoCuentas::getMaestros() {
+    return maestros;
+}
+
+std::vector<usuarioAlumno>& manejoCuentas::getAlumnos() {
+    return alumnos;
+}
+
+std::vector<UsuarioRegistro>& manejoCuentas::getRegistros() {
+    return registros;
+}
+
+template <typename T>
+void manejoCuentas::cargarUsuarios(const QString& archivo, std::vector<T>& lista) {
     QFile file(archivo);
+
+    if (!file.exists()) {
+        if (!file.open(QIODevice::WriteOnly)) {
+            qDebug() << "No se pudo crear el archivo" << archivo;
+            return;
+        }
+        file.close();
+    }
+
     if (!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "Error al abrir el archivo:" << archivo;
-        return "";
+        qDebug() << "No se pudo abrir" << archivo;
+        return;
     }
 
     QDataStream in(&file);
+    lista.clear();
+
     while (!in.atEnd()) {
-        bool activo;
-        QString nombre, user, pass, cuenta, clases, rol, carrera, id, profesion;
-        float sueldo;
-
-        if (archivo == "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_registro.dat") {
-            in >> activo >> nombre >> user >> pass;
-        } else if (archivo == "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_maestros.mad") {
-            in >> activo >> id >> nombre >> profesion >> sueldo >> user >> pass >> rol;
-        } else if (archivo == "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_alumnos.alm") {
-            in >> activo >> cuenta >> nombre >> carrera >> clases >> user >> pass >> rol;
-        }
-
-        if (user == usuario && pass == password) {
-            file.close();
-            return archivo;
-        }
+        T usuario;
+        usuario.cargar(in);
+        lista.push_back(usuario);
     }
 
     file.close();
+}
+
+template <typename T>
+void manejoCuentas::guardarUsuarios(const QString& archivo, const std::vector<T>& lista) {
+    QFile file(archivo);
+    if (!file.open(QIODevice::WriteOnly)) {
+        qDebug() << "No se pudo abrir" << archivo;
+        return;
+    }
+
+    QDataStream out(&file);
+    for (const auto& usuario : lista) {
+        usuario.guardar(out);
+    }
+
+    file.close();
+}
+
+QString manejoCuentas::validarUsuario(const QString& usuario, const QString& password) {
+    for (const auto& reg : registros) {
+        if (reg.getUser() == usuario && reg.getPassword() == password && reg.getActivo()) {
+            return "registro";
+        }
+    }
+
+    for (const auto& maestro : maestros) {
+        if (maestro.getUser() == usuario && maestro.getPassword() == password && maestro.getActivo()) {
+            return "maestro";
+        }
+    }
+
+    for (const auto& alumno : alumnos) {
+        if (alumno.getUser() == usuario && alumno.getPassword() == password && alumno.getActivo()) {
+            return "alumno";
+        }
+    }
+
     return "";
 }
 
-
-//para saber si existe
-bool manejoCuentas::existeUsuario(const QString &id, const QString &usuario,  const QString &tipoCuenta) {
-    QString archivo;
-    if (tipoCuenta == "registro") {
-        archivo = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_registro.dat";
-    } else if (tipoCuenta == "maestro") {
-        archivo = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_maestros.mad";
-    } else if (tipoCuenta == "alumno") {
-        archivo = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_alumnos.alm";
-    } else {
-        qDebug() << "Tipo de cuenta inválido";
-        return false;
-    }
-
-    return validarEnArchivoUsuario(archivo, usuario, id);
-}
-
-bool manejoCuentas::validarEnArchivoUsuario(const QString &archivo, const QString &usuario, const QString &id) {
-    QFile file(archivo);
-    if (!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "Error al abrir el archivo:" << archivo;
-        return false;
-    }
-
-    QDataStream in(&file);
-    while (!in.atEnd()) {
-        bool activo;
-        QString nombre, user, pass, cuenta, clases, rol, carrera, idMaestro, profesion;
-        float sueldo;
-
-        if (archivo == "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_registro.dat") {
-            in >> activo >> nombre >> user >> pass;
-            if (activo && user == usuario) {
-                file.close();
-                return true;
-            }
-        } else if (archivo == "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_maestros.mad") {
-            in >> activo >> idMaestro >> nombre >> profesion >> sueldo >> user >> pass >> rol;
-            if (activo && (user == usuario || idMaestro == id)) {
-                file.close();
-                return true;
-            }
-        } else if (archivo == "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_alumnos.alm") {
-            in >> activo >> cuenta >> nombre >> carrera >> clases >> user >> pass >> rol;
-            if (activo && user == usuario) {
-                file.close();
-                return true;
-            }
+bool manejoCuentas::usuarioMaestroExiste(const usuarioMaestro& usuario) {
+    for (const auto& u : maestros) {
+        if (u.getID() == usuario.getID() || u.getUser() == usuario.getUser()) {
+            return true;
         }
     }
-
-    file.close();
     return false;
 }
 
-QList<Maestro> manejoCuentas::obtenerListaMaestros() {
-    QList<Maestro> listaMaestros;
-    QFile file("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_maestros.mad");
-
-    if (!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "Error al abrir el archivo de maestros.";
-        return listaMaestros;
-    }
-
-    QDataStream in(&file);
-    while (!in.atEnd()) {
-        Maestro maestro;
-        in >> maestro.activo >> maestro.id >> maestro.nombre >> maestro.profesion
-           >> maestro.sueldo >> maestro.usuario >> maestro.password >> maestro.rol;
-
-        if (maestro.activo) {
-            listaMaestros.append(maestro);
+bool manejoCuentas::usuarioAlumnoExiste(const usuarioAlumno& usuario) {
+    for (const auto& u : alumnos) {
+        if (u.getCuenta() == usuario.getCuenta() || u.getUser() == usuario.getUser()) {
+            return true;
         }
     }
+    return false;
+}
 
-    file.close();
+bool manejoCuentas::usuarioRegistroExiste(const UsuarioRegistro& usuario) {
+    for (const auto& u : registros) {
+        if (u.getUser() == usuario.getUser()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+QList<usuarioMaestro> manejoCuentas::obtenerListaMaestros() const {
+    QList<usuarioMaestro> listaMaestros;
+    for (const auto& maestro : maestros) {
+        listaMaestros.append(maestro);
+    }
+
     return listaMaestros;
 }

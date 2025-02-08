@@ -9,14 +9,14 @@
 
 class UsuarioRegistro {
 public:
-    UsuarioRegistro(bool activo, QString nombre, QString user, QString password);
     UsuarioRegistro();
+    UsuarioRegistro(bool activo, QString nombre, QString user, QString password);
     bool getActivo()const ;
     QString getNombre() const;
     QString getPassword() const;
     QString getUser() const;
-    void guardar();
-    void cargarUsuarios();
+    void cargar(QDataStream& in);
+    void guardar(QDataStream& out) const;
 
 private:
     bool activo_;

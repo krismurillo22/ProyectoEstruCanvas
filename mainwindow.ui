@@ -194,7 +194,7 @@ border: none;</string>
        </rect>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page"/>
       <widget class="QWidget" name="page_2">
@@ -470,7 +470,7 @@ font: 75 16pt &quot;Segoe UI&quot;;</string>
        </rect>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="page_6"/>
       <widget class="QWidget" name="maestros">
@@ -523,6 +523,12 @@ color: rgb(8, 19, 110);</string>
 font: 75 14pt &quot;Segoe UI&quot;;
 border: none;
 color: rgb(8, 19, 110);</string>
+        </property>
+        <property name="text">
+         <string>Maestro</string>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
         </property>
        </widget>
        <widget class="QLineEdit" name="nombreMaestro">

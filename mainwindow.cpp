@@ -8,21 +8,18 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    //alumnoDefault(true, "000000", "Alumno", "no", "no", "alumno", "1", "Estudiante"),
-    //maestroDefault(true, "000000", "Maestro", "no", 0.0, "maestro", "1", "Docente"),
-    //registroDefault(true, "Admin", "admin", "1")
 {
     ui->setupUi(this);
-    //registroDefault.guardar();
-    //maestroDefault.guardar();
-    //alumnoDefault.guardar();
+    manejo = new manejoCuentas();
     QRect screenGeometry = QApplication::primaryScreen()->geometry();
     this->move(screenGeometry.center() - this->rect().center());
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete manejo;
 }
 
 
@@ -32,8 +29,7 @@ void MainWindow::on_pushButton_clicked()
     QString password = ui->password->text();
 
     if (!usuario.isEmpty() && !password.isEmpty()) {
-        manejoCuentas manejoCuentas;
-        QString tipoCuenta = manejoCuentas.validarUsuario(usuario, password);
+        QString tipoCuenta = manejo->validarUsuario(usuario, password);
         if (!tipoCuenta.isEmpty()) {
             if (tipoCuenta == "registro") {
                 ui->stackedWidget->setCurrentIndex(1);
@@ -102,34 +98,79 @@ void MainWindow::on_agregarMaestro_clicked()
 {
     ui->formularioRegistro->setCurrentIndex(1);
     ui->tituloMaestro->setText("AGREGAR MAESTRO");
+
+    ui->idMaestro->setEnabled(true);
+    ui->userMaestro->setEnabled(true);
+    ui->idMaestro->clear();
+    ui->nombreMaestro->clear();
+    ui->profesionMaestro->clear();
+    ui->userMaestro->clear();
+    ui->passwordMaestro->clear();
+    ui->rolMaestro->clear();
+    ui->sueldoMaestro->clear();
 }
 
 
 void MainWindow::on_modificarMaestro_clicked()
 {
-    manejoCuentas lista;
-        QList<Maestro> maestrosLista = lista.obtenerListaMaestros();  // Ahora devuelve QList<Maestro>
+    QList<usuarioMaestro> maestrosLista = manejo->obtenerListaMaestros();
+    QStringList nombresMaestros;
+    for (int i = 0; i < maestrosLista.size(); ++i) {
+        nombresMaestros.append(maestrosLista[i].getNombre());
+    }
 
-        QStringList nombresMaestros;
-        for (const auto &maestro : maestrosLista) {  // Evita copia innecesaria con const auto &
-            nombresMaestros.append(maestro.nombre);
-        }
-
-        bool ok;
-        QString maestroSeleccionado = QInputDialog::getItem(nullptr, "Seleccionar Maestro",
-                                                            "Elige el maestro que desea modificar:",
+    bool ok;
+    QString maestroSeleccionado = QInputDialog::getItem(nullptr, "Seleccionar Maestro",
+                                                            "Eliga el maestro que desea modificar:",
                                                             nombresMaestros, 0, false, &ok);
 
-        if (ok && !maestroSeleccionado.isEmpty()) {
+    for (int i = 0; i < maestrosLista.size(); ++i) {
+        if (maestrosLista[i].getNombre() == maestroSeleccionado) {
             ui->formularioRegistro->setCurrentIndex(1);
             ui->tituloMaestro->setText("MODIFICAR MAESTRO");
+
+            ui->idMaestro->setText(maestrosLista[i].getID());
+            ui->rolMaestro->setText(maestrosLista[i].getRol());
+            ui->nombreMaestro->setText(maestrosLista[i].getNombre());
+            ui->profesionMaestro->setText(maestrosLista[i].getProfesion());
+            ui->sueldoMaestro->setText(QString::number(maestrosLista[i].getSueldo(), 'f', 2));
+            ui->userMaestro->setText(maestrosLista[i].getUser());
+            ui->passwordMaestro->setText(maestrosLista[i].getPassword());
+
+            ui->idMaestro->setEnabled(false);
+            ui->userMaestro->setEnabled(false);
+            break;
         }
 
-}
+
+    }
+ }
 
 
 void MainWindow::on_eliminarMaestro_clicked()
 {
+    std::vector<usuarioMaestro>& maestrosLista = manejo->getMaestros();
+    QStringList nombresMaestros;
+    for (const auto& maestro : maestrosLista) {
+        nombresMaestros.append(maestro.getNombre());
+    }
+
+    bool ok;
+    QString maestroSeleccionado = QInputDialog::getItem(nullptr, "Seleccionar Maestro",
+                                                            "Eliga el maestro que desea eliminar:",
+                                                            nombresMaestros, 0, false, &ok);
+
+    if (ok && !maestroSeleccionado.isEmpty()) {
+        for (auto it = maestrosLista.begin(); it != maestrosLista.end(); ++it) {
+            if (it->getNombre() == maestroSeleccionado) {
+                maestrosLista.erase(it);
+                QMessageBox::information(this, "Éxito", "Maestro eliminado correctamente.");
+                return;
+            }
+        }
+    } else {
+        QMessageBox::warning(this, "Error", "No se ha seleccionado un maestro.");
+    }
 
 }
 
@@ -164,14 +205,14 @@ void MainWindow::on_aceptarMaestro_clicked()
             QMessageBox::warning(this, "Error", "El sueldo ingresado no es válido.");
             return;
         }
+        usuarioMaestro usernuevo(true, id, nombre, profesion, sueldo, user, password, rol);
 
-        manejoCuentas manejo;
-        if (manejo.existeUsuario(id, user, "maestro")) {
+        if (manejo->usuarioMaestroExiste(usernuevo)) {
             QMessageBox::warning(this, "Error", "El usuario o ID ya existen en el sistema.");
             return;
         }
-        usuarioMaestro maestroNuevo(true, id, nombre, profesion, sueldo, user, password, rol);
-        maestroNuevo.guardar();
+
+        manejo->agregarMaestro(usernuevo);
         QMessageBox::information(this, "Éxito", "Maestro agregado correctamente.");
 
         ui->idMaestro->clear();
@@ -183,7 +224,48 @@ void MainWindow::on_aceptarMaestro_clicked()
         ui->sueldoMaestro->clear();
 
     }else if(ui->tituloMaestro->text()=="MODIFICAR MAESTRO"){
+        std::vector<usuarioMaestro>& maestrosLista = manejo->getMaestros();
+        QString id= ui->idMaestro->text();
+        QString nombre= ui->nombreMaestro->text();
+        QString profesion= ui->profesionMaestro->text();
+        QString user= ui->userMaestro->text();
+        QString password=ui->passwordMaestro->text();
+        QString rol= ui->rolMaestro->text();
+        QString sueldoTexto = ui->sueldoMaestro->text();
 
+        if (id.isEmpty() || nombre.isEmpty() || profesion.isEmpty() || user.isEmpty() ||
+            password.isEmpty() || rol.isEmpty() || sueldoTexto.isEmpty()) {
+            QMessageBox::warning(this, "Error", "Todos los campos deben estar llenos.");
+            return;
+        }
+
+        bool ok;
+        float sueldo = sueldoTexto.toFloat(&ok);
+        if (!ok) {
+            QMessageBox::warning(this, "Error", "El sueldo ingresado no es válido.");
+            return;
+        }
+
+        for (std::vector<usuarioMaestro>::size_type i = 0; i < maestrosLista.size(); ++i) {
+            if (maestrosLista[i].getID() == id) {
+                maestrosLista[i].setNombre(nombre);
+                maestrosLista[i].setProfesion(profesion);
+                maestrosLista[i].setSueldo(sueldo);
+                maestrosLista[i].setPassword(password);
+                maestrosLista[i].setRol(rol);
+
+                QMessageBox::information(this, "Éxito", "Maestro modificado correctamente.");
+                break;
+            }
+        }
+
+        ui->idMaestro->clear();
+        ui->nombreMaestro->clear();
+        ui->profesionMaestro->clear();
+        ui->userMaestro->clear();
+        ui->passwordMaestro->clear();
+        ui->rolMaestro->clear();
+        ui->sueldoMaestro->clear();
     }
 }
 

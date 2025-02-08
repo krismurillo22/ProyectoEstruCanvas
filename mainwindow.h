@@ -5,6 +5,7 @@
 #include "usuarioalumno.h"
 #include "usuariomaestro.h"
 #include "UsuarioRegistro.h"
+#include "manejocuentas.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -17,6 +18,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    manejoCuentas *manejo;
 
 private slots:
     void on_pushButton_clicked();
