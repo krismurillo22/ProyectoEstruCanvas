@@ -44,3 +44,27 @@ void usuarioAlumno::cargar(QDataStream& in) {
 void usuarioAlumno::guardar(QDataStream& out) const {
     out << activo_ << cuenta_ << nombre_ << carrera_ << clases_ << user_ << password_ << rol_;
 }
+
+void usuarioAlumno::setActivo(bool activo) {
+    activo_ = activo;
+}
+
+void usuarioAlumno::setNombre(QString nombre) {
+    nombre_ = nombre;
+}
+
+void usuarioAlumno::setCarrera(QString carrera) {
+    carrera_ = carrera;
+}
+
+void usuarioAlumno::setClases(QString clases) {
+    clases_ = clases;
+}
+
+void usuarioAlumno::setPassword(QString password) {
+    password_ = password;
+}
+
+void usuarioAlumno::setRol(QString rol) {
+    rol_ = rol;
+}

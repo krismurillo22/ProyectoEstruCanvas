@@ -9,6 +9,7 @@
 #include "usuarioalumno.h"
 #include "usuariomaestro.h"
 #include "UsuarioRegistro.h"
+#include "clasesplantilla.h"
 
 class manejoCuentas
 {
@@ -18,14 +19,17 @@ public:
     void agregarMaestro(const usuarioMaestro& maestro);
     void agregarRegistro(const UsuarioRegistro& registro);
     void agregarAlumno(const usuarioAlumno& alumno);
+    void agregarClases(const clasesPlantilla& clase);
 
     std::vector<usuarioMaestro>& getMaestros();
     std::vector<usuarioAlumno>& getAlumnos();
     std::vector<UsuarioRegistro>& getRegistros();
+    std::vector<clasesPlantilla>& getClases();
 
     bool usuarioMaestroExiste(const usuarioMaestro& usuario);
     bool usuarioAlumnoExiste(const usuarioAlumno& usuario);
     bool usuarioRegistroExiste(const UsuarioRegistro& usuario);
+    bool ClaseExiste(const clasesPlantilla& clase);
 
     template <typename T>
     void cargarUsuarios(const QString& archivo, std::vector<T>& lista);
@@ -34,18 +38,27 @@ public:
     void guardarUsuarios(const QString& archivo, const std::vector<T>& lista);
 
     QString validarUsuario(const QString& usuario, const QString& password);
-    QList<usuarioMaestro> obtenerListaMaestros() const;
 
+    QList<usuarioMaestro> obtenerListaMaestros() const;
+    QList<UsuarioRegistro> obtenerListaRegistros() const;
+    QList<usuarioAlumno> obtenerListaAlumnos() const;
+    QList<clasesPlantilla> obtenerListaClases() const;
+
+    void crearClase(const QString& idClase);
+    void matricularUsuarioEnClase(const QString& claseID, const QString& username);
+    QList<QString> obtenerUsuariosMatriculadosEnClase(const QString& claseID);
 
 
 private:
     std::vector<usuarioAlumno> alumnos;
     std::vector<UsuarioRegistro> registros;
     std::vector<usuarioMaestro> maestros;
+    std::vector<clasesPlantilla> clases;
 
     QString archivoMaestros = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_maestros.mad";
     QString archivoRegistros = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_registro.dat";
     QString archivoAlumnos = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_alumnos.alm";
+    QString archivoClases = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/lista_clases.cla";
 
 };
 

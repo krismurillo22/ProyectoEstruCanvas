@@ -194,7 +194,7 @@ border: none;</string>
        </rect>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="page"/>
       <widget class="QWidget" name="page_2">
@@ -470,7 +470,7 @@ font: 75 16pt &quot;Segoe UI&quot;;</string>
        </rect>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="page_6"/>
       <widget class="QWidget" name="maestros">
@@ -843,6 +843,12 @@ font: 75 14pt &quot;Segoe UI&quot;;
 border: none;
 color: rgb(8, 19, 110);</string>
         </property>
+        <property name="text">
+         <string>Alumno</string>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
        </widget>
        <widget class="QLineEdit" name="nombreAlumno">
         <property name="geometry">
@@ -954,7 +960,7 @@ color: rgb(8, 19, 110);</string>
          <bool>true</bool>
         </property>
        </widget>
-       <widget class="QLabel" name="tituloAlumnos_2">
+       <widget class="QLabel" name="tituloClases">
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -989,22 +995,6 @@ border: none;</string>
         </property>
         <property name="text">
          <string/>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="horaClases">
-        <property name="geometry">
-         <rect>
-          <x>520</x>
-          <y>140</y>
-          <width>711</width>
-          <height>51</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background: transparent;
-font: 75 14pt &quot;Segoe UI&quot;;
-border: none;
-color: rgb(8, 19, 110);</string>
         </property>
        </widget>
        <widget class="QLineEdit" name="nombreClases">
@@ -1074,9 +1064,9 @@ color: rgb(8, 19, 110);</string>
        <widget class="QLineEdit" name="periodoClases">
         <property name="geometry">
          <rect>
-          <x>-10</x>
+          <x>90</x>
           <y>500</y>
-          <width>601</width>
+          <width>501</width>
           <height>51</height>
          </rect>
         </property>
@@ -1103,23 +1093,277 @@ border: none;
 color: rgb(8, 19, 110);</string>
         </property>
        </widget>
-      </widget>
-      <widget class="QWidget" name="asignacion">
-       <widget class="QLabel" name="label_9">
+       <widget class="QComboBox" name="horaComboBox">
         <property name="geometry">
          <rect>
-          <x>-4</x>
-          <y>2</y>
-          <width>1311</width>
-          <height>761</height>
+          <x>510</x>
+          <y>140</y>
+          <width>711</width>
+          <height>51</height>
          </rect>
         </property>
-        <property name="text">
-         <string/>
+        <property name="styleSheet">
+         <string notr="true">background: white;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
         </property>
-        <property name="scaledContents">
-         <bool>true</bool>
+        <item>
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>6:45 A.M.</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>8:10 A.M.</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>9:55 A.M.</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>11:15 A.M.</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>12:35 P.M.</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>1:20 P.M.</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>2:40 P.M.</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>4:00 P.M.</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>5:20 P.M.</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>6:40 P.M.</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>8:00 P.M.</string>
+         </property>
+        </item>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="asignacion">
+       <widget class="QStackedWidget" name="asignacionStacked">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>1311</width>
+          <height>771</height>
+         </rect>
         </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <widget class="QWidget" name="page_8"/>
+        <widget class="QWidget" name="asignacioMaestron">
+         <widget class="QLabel" name="label_9">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>1311</width>
+            <height>761</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="imagenes.qrc">:/Fondos/AsignarMaestro.png</pixmap>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="claseComboBox">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>180</y>
+            <width>491</width>
+            <height>61</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background: white;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="maestroComboBox">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>370</y>
+            <width>491</width>
+            <height>61</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background: white;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="aceptarAsignacion">
+          <property name="geometry">
+           <rect>
+            <x>80</x>
+            <y>510</y>
+            <width>511</width>
+            <height>61</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background: transparent;
+border: none;</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="matricularAlumno">
+         <widget class="QLabel" name="label_10">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>1311</width>
+            <height>771</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="imagenes.qrc">:/Fondos/MatricularMateria.png</pixmap>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="claseMatricularCombo">
+          <property name="geometry">
+           <rect>
+            <x>730</x>
+            <y>190</y>
+            <width>491</width>
+            <height>61</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background: white;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="alumnoCombobox">
+          <property name="geometry">
+           <rect>
+            <x>730</x>
+            <y>380</y>
+            <width>491</width>
+            <height>61</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background: white;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="aceptarAsignacion_2">
+          <property name="geometry">
+           <rect>
+            <x>720</x>
+            <y>520</y>
+            <width>511</width>
+            <height>61</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background: transparent;
+border: none;</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QLabel" name="tituloAsignar">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>40</y>
+            <width>651</width>
+            <height>51</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgb(8, 19, 110);
+font: 87 24pt &quot;Segoe UI Black&quot;;</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+         <widget class="QLabel" name="TituloMatricula">
+          <property name="geometry">
+           <rect>
+            <x>650</x>
+            <y>40</y>
+            <width>651</width>
+            <height>51</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgb(8, 19, 110);
+font: 87 24pt &quot;Segoe UI Black&quot;;</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </widget>
        </widget>
       </widget>
      </widget>

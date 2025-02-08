@@ -106,7 +106,6 @@ void MainWindow::on_agregarMaestro_clicked()
     ui->profesionMaestro->clear();
     ui->userMaestro->clear();
     ui->passwordMaestro->clear();
-    ui->rolMaestro->clear();
     ui->sueldoMaestro->clear();
 }
 
@@ -141,8 +140,6 @@ void MainWindow::on_modificarMaestro_clicked()
             ui->userMaestro->setEnabled(false);
             break;
         }
-
-
     }
  }
 
@@ -178,6 +175,17 @@ void MainWindow::on_eliminarMaestro_clicked()
 void MainWindow::on_agregarClase_clicked()
 {
     ui->formularioRegistro->setCurrentIndex(4);
+    ui->tituloClases->setText("AGREGAR CLASE");
+
+    ui->idClases->setEnabled(true);
+    ui->nombreClases->setEnabled(true);
+    ui->idClases->clear();
+    ui->nombreAlumno->clear();
+    ui->uvClases->clear();
+    ui->semestreClases->clear();
+    ui->periodoClases->clear();
+    ui->yearClases->clear();
+
 }
 
 
@@ -279,14 +287,489 @@ void MainWindow::on_registrarRegistro_clicked()
 void MainWindow::on_agregarRegistro_clicked()
 {
     ui->formularioRegistro->setCurrentIndex(2);
+    ui->tituloRegistro->setText("AGREGAR REGISTRO");
+
+    ui->userRegistro->setEnabled(true);
+    ui->nombreRegistro->clear();
+    ui->userRegistro->clear();
+    ui->passwordRegistro->clear();
 }
 
 
 void MainWindow::on_agregarAlumno_clicked()
 {
     ui->formularioRegistro->setCurrentIndex(3);
+    ui->tituloAlumnos->setText("AGREGAR ALUMNO");
+
+    ui->cuentaAlumnos->setEnabled(true);
+    ui->usuarioAlumnos->setEnabled(true);
+    ui->cuentaAlumnos->clear();
+    ui->nombreAlumno->clear();
+    ui->carreraAlumnos->clear();
+    ui->usuarioAlumnos->clear();
+    ui->passwordAlumnos->clear();
+}
+
+void MainWindow::on_aceptarRegistro_clicked()
+{
+    if (ui->tituloRegistro->text()=="AGREGAR REGISTRO"){
+        QString nombre= ui->nombreRegistro->text();
+        QString user= ui->userRegistro->text();
+        QString password=ui->passwordRegistro->text();
+
+        if (nombre.isEmpty() || user.isEmpty() || password.isEmpty()) {
+            QMessageBox::warning(this, "Error", "Todos los campos deben estar llenos.");
+            return;
+        }
+
+        UsuarioRegistro usernuevo(true, nombre, user, password);
+
+        if (manejo->usuarioRegistroExiste(usernuevo)) {
+            QMessageBox::warning(this, "Error", "El usuario ya existen en el sistema.");
+            return;
+        }
+
+        manejo->agregarRegistro(usernuevo);
+        QMessageBox::information(this, "Éxito", "Registro fue agregado correctamente.");
+
+        ui->nombreRegistro->clear();
+        ui->passwordRegistro->clear();
+        ui->userRegistro->clear();
+
+    }else if(ui->tituloRegistro->text()=="MODIFICAR REGISTRO"){
+        std::vector<UsuarioRegistro>& registroLista = manejo->getRegistros();
+        QString nombre= ui->nombreRegistro->text();
+        QString user= ui->userRegistro->text();
+        QString password=ui->passwordRegistro->text();
+
+        if (nombre.isEmpty() || user.isEmpty() || password.isEmpty()) {
+            QMessageBox::warning(this, "Error", "Todos los campos deben estar llenos.");
+            return;
+        }
+
+        for (std::vector<UsuarioRegistro>::size_type i = 0; i < registroLista.size(); ++i) {
+            if (registroLista[i].getUser() == user) {
+                registroLista[i].setNombre(nombre);
+                registroLista[i].setPassword(password);
+
+                QMessageBox::information(this, "Éxito", "Registro fue modificado correctamente.");
+                break;
+            }
+        }
+
+        ui->nombreRegistro->clear();
+        ui->passwordRegistro->clear();
+        ui->userRegistro->clear();
+    }
 }
 
 
+void MainWindow::on_modificarRegistro_clicked()
+{
+    QList<UsuarioRegistro> registroLista = manejo->obtenerListaRegistros();
+    QStringList nombresRegistro;
+    for (int i = 0; i < registroLista.size(); ++i) {
+        nombresRegistro.append(registroLista[i].getNombre());
+    }
 
+    bool ok;
+    QString registroSelec = QInputDialog::getItem(nullptr, "Seleccionar Registro",
+                                                            "Eliga el registro que desea modificar:",
+                                                            nombresRegistro, 0, false, &ok);
+
+    for (int i = 0; i < registroLista.size(); ++i) {
+        if (registroLista[i].getNombre() == registroSelec) {
+            ui->formularioRegistro->setCurrentIndex(2);
+            ui->tituloRegistro->setText("MODIFICAR REGISTRO");
+            ui->nombreRegistro->setText(registroLista[i].getNombre());
+            ui->userRegistro->setText(registroLista[i].getUser());
+            ui->passwordRegistro->setText(registroLista[i].getPassword());
+
+            ui->userRegistro->setEnabled(false);
+            break;
+        }
+
+
+    }
+}
+
+
+void MainWindow::on_eliminarRegistro_clicked()
+{
+    std::vector<UsuarioRegistro>& registroLista = manejo->getRegistros();
+    QStringList nombresRegistros;
+    for (const auto& registro : registroLista) {
+        nombresRegistros.append(registro.getNombre());
+    }
+
+    bool ok;
+    QString registroSelec = QInputDialog::getItem(nullptr, "Seleccionar Registro",
+                                                            "Eliga el registro que desea eliminar:",
+                                                            nombresRegistros, 0, false, &ok);
+
+    if (ok && !registroSelec.isEmpty()) {
+        for (auto it = registroLista.begin(); it != registroLista.end(); ++it) {
+            if (it->getNombre() == registroSelec) {
+                registroLista.erase(it);
+                QMessageBox::information(this, "Éxito", "Registro eliminado correctamente.");
+                return;
+            }
+        }
+    } else {
+        QMessageBox::warning(this, "Error", "No se ha seleccionado un registro.");
+    }
+
+    ui->nombreRegistro->clear();
+    ui->passwordRegistro->clear();
+    ui->userRegistro->clear();
+}
+
+
+void MainWindow::on_modificarAlumno_clicked()
+{
+    QList<usuarioAlumno> alumnolista = manejo->obtenerListaAlumnos();
+    QStringList nombresLista;
+    for (int i = 0; i < alumnolista.size(); ++i) {
+        nombresLista.append(alumnolista[i].getNombre());
+    }
+
+    bool ok;
+    QString alumnoSeleccionado = QInputDialog::getItem(nullptr, "Seleccionar Alumno",
+                                                            "Eliga el alumno que desea modificar:",
+                                                            nombresLista, 0, false, &ok);
+
+    for (int i = 0; i < alumnolista.size(); ++i) {
+        if (alumnolista[i].getNombre() == alumnoSeleccionado) {
+            ui->formularioRegistro->setCurrentIndex(3);
+            ui->tituloAlumnos->setText("MODIFICAR ALUMNO");
+
+            ui->cuentaAlumnos->setText(alumnolista[i].getCuenta());
+            ui->rolAlumnos->setText(alumnolista[i].getRol());
+            ui->nombreAlumno->setText(alumnolista[i].getNombre());
+            ui->carreraAlumnos->setText(alumnolista[i].getCarrera());
+            ui->clasesAlumnos->setText(alumnolista[i].getClases());
+            ui->usuarioAlumnos->setText(alumnolista[i].getUser());
+            ui->passwordAlumnos->setText(alumnolista[i].getPassword());
+            ui->cuentaAlumnos->setEnabled(false);
+            ui->usuarioAlumnos->setEnabled(false);
+            break;
+        }
+    }
+}
+
+
+void MainWindow::on_eliminarAlumno_clicked()
+{
+    std::vector<usuarioAlumno>& alumnoLista = manejo->getAlumnos();
+    QStringList nombresAlumnos;
+    for (const auto& alumno : alumnoLista) {
+        nombresAlumnos.append(alumno.getNombre());
+    }
+
+    bool ok;
+    QString alumnoSelec = QInputDialog::getItem(nullptr, "Seleccionar Alumno",
+                                                            "Eliga el alumno que desea eliminar:",
+                                                            nombresAlumnos, 0, false, &ok);
+
+    if (ok && !alumnoSelec.isEmpty()) {
+        for (auto it = alumnoLista.begin(); it != alumnoLista.end(); ++it) {
+            if (it->getNombre() == alumnoSelec) {
+                alumnoLista.erase(it);
+                QMessageBox::information(this, "Éxito", "Alumno eliminado correctamente.");
+                return;
+            }
+        }
+    } else {
+        QMessageBox::warning(this, "Error", "No se ha seleccionado un alumno.");
+    }
+
+    ui->cuentaAlumnos->clear();
+    ui->nombreAlumno->clear();
+    ui->carreraAlumnos->clear();
+    ui->usuarioAlumnos->clear();
+    ui->passwordAlumnos->clear();
+}
+
+
+void MainWindow::on_aceptarAlumnos_clicked()
+{
+    if (ui->tituloAlumnos->text()=="AGREGAR ALUMNO"){
+        QString cuenta= ui->cuentaAlumnos->text();
+        QString nombre= ui->nombreAlumno->text();
+        QString carrera= ui->carreraAlumnos->text();
+        QString user= ui->usuarioAlumnos->text();
+        QString password=ui->passwordAlumnos->text();
+        QString rol= ui->rolAlumnos->text();
+        QString clases = ui->clasesAlumnos->text();
+
+        if (cuenta.isEmpty() || nombre.isEmpty() || carrera.isEmpty() || user.isEmpty() ||
+            password.isEmpty() || rol.isEmpty() || clases.isEmpty()) {
+            QMessageBox::warning(this, "Error", "Todos los campos deben estar llenos.");
+            return;
+        }
+
+        usuarioAlumno usernuevo(true, cuenta, nombre, carrera, clases, user, password, rol);
+
+        if (manejo->usuarioAlumnoExiste(usernuevo)) {
+            QMessageBox::warning(this, "Error", "El usuario o cuenta ya existen en el sistema.");
+            return;
+        }
+
+        manejo->agregarAlumno(usernuevo);
+        QMessageBox::information(this, "Éxito", "Alumno agregado correctamente.");
+
+        ui->cuentaAlumnos->clear();
+        ui->nombreAlumno->clear();
+        ui->carreraAlumnos->clear();
+        ui->usuarioAlumnos->clear();
+        ui->passwordAlumnos->clear();
+
+    }else if(ui->tituloAlumnos->text()=="MODIFICAR ALUMNO"){
+        std::vector<usuarioAlumno>& alumnoLista = manejo->getAlumnos();
+        QString cuenta= ui->cuentaAlumnos->text();
+        QString nombre= ui->nombreAlumno->text();
+        QString carrera= ui->carreraAlumnos->text();
+        QString user= ui->usuarioAlumnos->text();
+        QString password=ui->passwordAlumnos->text();
+        QString rol= ui->rolAlumnos->text();
+        QString clases = ui->clasesAlumnos->text();
+
+        if (cuenta.isEmpty() || nombre.isEmpty() || carrera.isEmpty() || user.isEmpty() ||
+            password.isEmpty() || rol.isEmpty() || clases.isEmpty()) {
+            QMessageBox::warning(this, "Error", "Todos los campos deben estar llenos.");
+            return;
+        }
+
+        for (std::vector<usuarioAlumno>::size_type i = 0; i < alumnoLista.size(); ++i) {
+            if (alumnoLista[i].getCuenta() == cuenta) {
+                alumnoLista[i].setNombre(nombre);
+                alumnoLista[i].setCarrera(carrera);
+                alumnoLista[i].setClases(clases);
+                alumnoLista[i].setPassword(password);
+                alumnoLista[i].setRol(rol);
+
+                QMessageBox::information(this, "Éxito", "Alumno modificado correctamente.");
+                break;
+            }
+        }
+
+        ui->cuentaAlumnos->clear();
+        ui->nombreAlumno->clear();
+        ui->carreraAlumnos->clear();
+        ui->usuarioAlumnos->clear();
+        ui->passwordAlumnos->clear();
+    }
+}
+
+
+void MainWindow::on_modificarClase_clicked()
+{
+    QList<clasesPlantilla> claseLista = manejo->obtenerListaClases();
+    QStringList nombresClases;
+    for (int i = 0; i < claseLista.size(); ++i) {
+        nombresClases.append(claseLista[i].getNombre());
+    }
+
+    bool ok;
+    QString claseSelec = QInputDialog::getItem(nullptr, "Seleccionar Clase",
+                                                            "Eliga la clase que desea modificar:",
+                                                            nombresClases, 0, false, &ok);
+
+    for (int i = 0; i < claseLista.size(); ++i) {
+        if (claseLista[i].getNombre() == claseSelec) {
+            ui->formularioRegistro->setCurrentIndex(4);
+            ui->tituloClases->setText("MODIFICAR CLASE");
+
+            ui->idClases->setText(claseLista[i].getID());
+            ui->horaComboBox->setCurrentText(claseLista[i].getHora());
+            ui->nombreClases->setText(claseLista[i].getNombre());
+            ui->uvClases->setText(QString::number(claseLista[i].getUV()));
+            ui->periodoClases->setText(QString::number(claseLista[i].getPeriodo()));
+            ui->yearClases->setText(QString::number(claseLista[i].getYear()));
+            ui->semestreClases->setText(QString::number(claseLista[i].getSemestre()));
+            ui->idClases->setEnabled(false);
+            ui->nombreClases->setEnabled(false);
+            break;
+        }
+    }
+}
+
+
+void MainWindow::on_eliminarClase_clicked()
+{
+    std::vector<clasesPlantilla>& clasesLista = manejo->getClases();
+    QStringList nombreClases;
+    for (const auto& clase : clasesLista) {
+        nombreClases.append(clase.getNombre());
+    }
+
+    bool ok;
+    QString claseSelec = QInputDialog::getItem(nullptr, "Seleccionar Clase",
+                                                            "Eliga la clase que desea eliminar:",
+                                                            nombreClases, 0, false, &ok);
+
+    if (ok && !claseSelec.isEmpty()) {
+        for (auto it = clasesLista.begin(); it != clasesLista.end(); ++it) {
+            if (it->getNombre() == claseSelec) {
+                clasesLista.erase(it);
+                QMessageBox::information(this, "Éxito", "Clase eliminado correctamente.");
+                return;
+            }
+        }
+    } else {
+        QMessageBox::warning(this, "Error", "No se ha seleccionado una clase.");
+    }
+
+    ui->idClases->clear();
+    ui->nombreClases->clear();
+    ui->uvClases->clear();
+    ui->periodoClases->clear();
+    ui->yearClases->clear();
+    ui->semestreClases->clear();
+
+}
+
+
+void MainWindow::on_aceptarClases_clicked()
+{
+    if (ui->tituloClases->text()=="AGREGAR CLASE"){
+        QString id= ui->idClases->text();
+        QString nombre= ui->nombreClases->text();
+        QString hora= ui->horaComboBox->currentText();
+        QString uv= ui->uvClases->text();
+        QString semestre=ui->semestreClases->text();
+        QString year= ui->yearClases->text();
+        QString periodo = ui->periodoClases->text();
+
+        if (id.isEmpty() || nombre.isEmpty() || hora.isEmpty() || uv.isEmpty() ||
+            semestre.isEmpty() || year.isEmpty() || periodo.isEmpty()) {
+            QMessageBox::warning(this, "Error", "Todos los campos deben estar llenos.");
+            return;
+        }
+
+        bool ok1, ok2, ok3, ok4;
+        int uvInt = uv.toInt(&ok1);
+        int semestreInt = semestre.toInt(&ok2);
+        int yearInt = year.toInt(&ok3);
+        int periodoInt = periodo.toInt(&ok4);
+
+        if (!ok1 || !ok2 || !ok3 || !ok4) {
+            QMessageBox::warning(this, "Error", "Uno o más valores ingresados no son números válidos.");
+            return;
+        }
+
+        clasesPlantilla claseNueva(true, id, nombre, hora, uvInt, semestreInt, periodoInt, yearInt);
+
+        if (manejo->ClaseExiste(claseNueva)) {
+            QMessageBox::warning(this, "Error", "La clase ya existe en el sistema.");
+            return;
+        }
+
+        manejo->agregarClases(claseNueva);
+        manejo->crearClase(id);
+
+        QMessageBox::information(this, "Éxito", "Clase agregada correctamente.");
+
+        ui->idClases->clear();
+        ui->nombreClases->clear();
+        ui->uvClases->clear();
+        ui->periodoClases->clear();
+        ui->yearClases->clear();
+        ui->semestreClases->clear();
+
+    }else if(ui->tituloClases->text()=="MODIFICAR CLASE"){
+        std::vector<clasesPlantilla>& claseLista = manejo->getClases();
+        QString id= ui->idClases->text();
+        QString nombre= ui->nombreClases->text();
+        QString hora= ui->horaComboBox->currentText();
+        QString uv= ui->uvClases->text();
+        QString semestre=ui->semestreClases->text();
+        QString year= ui->yearClases->text();
+        QString periodo = ui->periodoClases->text();
+
+        bool ok1, ok2, ok3, ok4;
+        int uvInt = uv.toInt(&ok1);
+        int semestreInt = semestre.toInt(&ok2);
+        int yearInt = year.toInt(&ok3);
+        int periodoInt = periodo.toInt(&ok4);
+
+        if (!ok1 || !ok2 || !ok3 || !ok4) {
+            QMessageBox::warning(this, "Error", "Uno o más valores ingresados no son números válidos.");
+            return;
+        }
+
+        for (std::vector<clasesPlantilla>::size_type i = 0; i < claseLista.size(); ++i) {
+            if (claseLista[i].getID() == id) {
+                claseLista[i].setSemestre(semestreInt);
+                claseLista[i].setYear(yearInt);
+                claseLista[i].setPeriodo(periodoInt);
+                claseLista[i].setUV(uvInt);
+                claseLista[i].setHora(hora);
+
+                QMessageBox::information(this, "Éxito", "Clase modificado correctamente.");
+                break;
+            }
+        }
+
+        ui->idClases->clear();
+        ui->nombreClases->clear();
+        ui->uvClases->clear();
+        ui->periodoClases->clear();
+        ui->yearClases->clear();
+        ui->semestreClases->clear();
+    }
+}
+
+
+void MainWindow::on_AsignarMaestro_clicked()
+{
+    ui->asignacionStacked->setCurrentIndex(1);
+    ui->tituloAsignar->setText("ASIGNAR MAESTROS");
+    ui->TituloMatricula->setText("");
+
+    QList<clasesPlantilla> claseLista = manejo->obtenerListaClases();
+    QStringList opciones;
+    for (int i = 0; i < claseLista.size(); ++i) {
+        opciones.append(claseLista[i].getNombre());
+    }
+
+    QList<usuarioMaestro> maestrosLista = manejo->obtenerListaMaestros();
+    QStringList nombresMaestros;
+    for (int i = 0; i < maestrosLista.size(); ++i) {
+        nombresMaestros.append(maestrosLista[i].getNombre());
+    }
+
+    ui->claseComboBox->addItems(opciones);
+    ui->maestroComboBox->addItems(nombresMaestros);
+
+}
+
+
+void MainWindow::on_matricularAlumnos_clicked()
+{
+    ui->asignacionStacked->setCurrentIndex(2);
+    ui->TituloMatricula->setText("MATRICULAR ALUMNO");
+    ui->tituloAsignar->setText("");
+
+    QList<clasesPlantilla> claseLista = manejo->obtenerListaClases();
+    QStringList opciones;
+    for (int i = 0; i < claseLista.size(); ++i) {
+        opciones.append(claseLista[i].getNombre());
+    }
+
+    QList<usuarioAlumno> alumnoLista = manejo->obtenerListaAlumnos();
+    QStringList nombresAlumnos;
+    for (int i = 0; i < alumnoLista.size(); ++i) {
+        nombresAlumnos.append(alumnoLista[i].getNombre());
+    }
+
+    ui->claseMatricularCombo->addItems(opciones);
+    ui->alumnoCombobox->addItems(nombresAlumnos);
+}
+
+
+void MainWindow::on_aceptarAsignacion_clicked()
+{
+
+}
 

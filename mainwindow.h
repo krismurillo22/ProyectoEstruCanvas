@@ -53,6 +53,30 @@ private slots:
 
     void on_agregarAlumno_clicked();
 
+    void on_aceptarRegistro_clicked();
+
+    void on_modificarRegistro_clicked();
+
+    void on_eliminarRegistro_clicked();
+
+    void on_modificarAlumno_clicked();
+
+    void on_eliminarAlumno_clicked();
+
+    void on_aceptarAlumnos_clicked();
+
+    void on_modificarClase_clicked();
+
+    void on_eliminarClase_clicked();
+
+    void on_aceptarClases_clicked();
+
+    void on_AsignarMaestro_clicked();
+
+    void on_matricularAlumnos_clicked();
+
+    void on_aceptarAsignacion_clicked();
+
 private:
     Ui::MainWindow *ui;
 

@@ -8,5 +8,7 @@
         <file>Fondos/FormularioAlumnos.png</file>
         <file>Fondos/FormularioClases.png</file>
         <file>Fondos/FormularioCRegistro.png</file>
+        <file>Fondos/AsignarMaestro.png</file>
+        <file>Fondos/MatricularMateria.png</file>
     </qresource>
 </RCC>

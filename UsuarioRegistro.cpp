@@ -29,3 +29,14 @@ void UsuarioRegistro::guardar(QDataStream& out) const {
     out << activo_ << nombre_ << user_ << password_;
 }
 
+void UsuarioRegistro::setActivo(bool activo) {
+    activo_ = activo;
+}
+
+void UsuarioRegistro::setNombre(QString nombre) {
+    nombre_ = nombre;
+}
+
+void UsuarioRegistro::setPassword(QString password) {
+    password_ = password;
+}

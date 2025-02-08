@@ -17,7 +17,17 @@ public:
     int getSemestre() const;
     int getPeriodo() const;
     int getYear() const;
-    void guardar();
+
+    void cargar(QDataStream& in);
+    void guardar(QDataStream& out) const;
+
+    void setActivo(bool activo);
+    void setHora(QString hora);
+    void setUV(int uv);
+    void setSemestre(int semestre);
+    void setPeriodo(int periodo);
+    void setYear(int year);
+
 private:
     bool activo_;
     QString id_;
