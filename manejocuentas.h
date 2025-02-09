@@ -45,9 +45,10 @@ public:
     QList<clasesPlantilla> obtenerListaClases() const;
 
     void crearClase(const QString& idClase);
-    void matricularUsuarioEnClase(const QString& claseID, const QString& username);
+    bool matricularUsuarioEnClase(const QString& claseID, const QString& username, bool esMaestro);
     QList<QString> obtenerUsuariosMatriculadosEnClase(const QString& claseID);
 
+    QString obtenerIDClaseXNombre(const QString& nombreClase);
 
 private:
     std::vector<usuarioAlumno> alumnos;

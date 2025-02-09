@@ -6,7 +6,8 @@
 #include <QDataStream>
 #include <QDebug>
 #include <typeinfo>
-
+#include <QDir>
+#include <QMessageBox>
 
 manejoCuentas::manejoCuentas() {
     qDebug() << "Constructor de manejoCuentas llamado";
@@ -196,42 +197,73 @@ QList<clasesPlantilla> manejoCuentas::obtenerListaClases() const {
 }
 
 void manejoCuentas::crearClase(const QString& idClase) {
-    QString nombreArchivo = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/clase_" + idClase + ".clas";
+    QString rutaClase = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/" + idClase;
+
+    QDir dir;
+    if (!dir.exists(rutaClase)) {
+        if (!dir.mkpath(rutaClase)) {
+            qDebug() << "No se pudo crear la carpeta para la clase" << idClase;
+            return;
+        }
+    }
+
+    QString nombreArchivo = rutaClase + "/estudiantes.clas";
     QFile file(nombreArchivo);
 
     if (!file.open(QIODevice::WriteOnly)) {
-        qDebug() << "No se pudo crear el archivo para la clase" << idClase;
+        qDebug() << "No se pudo crear el archivo de estudiantes para la clase" << idClase;
         return;
     }
 
     file.close();
-    qDebug() << "Archivo creado para la clase" << idClase;
+    qDebug() << "Clase creada: " << idClase << " con archivo de estudiantes.";
 }
 
-void manejoCuentas::matricularUsuarioEnClase(const QString& idClase, const QString& usuario) {
-    QString nombreArchivo = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/clase_" + idClase + ".clas";
+bool manejoCuentas::matricularUsuarioEnClase(const QString& idClase, const QString& usuario, bool esMaestro) {
+    QString rutaClase = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/" + idClase;
+    QString nombreArchivo = rutaClase + "/estudiantes.clas";
     QFile file(nombreArchivo);
+    QList<QString> lineas;
 
-    if (!file.open(QIODevice::Append)) {
-        qDebug() << "No se pudo abrir el archivo para la clase" << idClase;
-        return;
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&file);
+        while (!in.atEnd()) {
+            lineas.append(in.readLine());
+        }
+        file.close();
     }
 
-    QTextStream out(&file);
-    out << usuario << "\n";
-
-    file.close();
-    qDebug() << "Usuario" << usuario << "matriculado en la clase" << idClase;
+    if (esMaestro) {
+        for (const QString& usuarioExistente : lineas) {
+            if (usuarioExistente.startsWith("M:")) {
+                return false;
+            }
+        }
+        lineas.append("M:" + usuario);
+    } else {
+        if (lineas.contains(usuario)) {
+            return false;
+        }
+        lineas.append(usuario);
+    }
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        for (const QString& linea : lineas) {
+            out << linea << "\n";
+        }
+        file.close();
+    }
+    return true;
 }
 
 QList<QString> manejoCuentas::obtenerUsuariosMatriculadosEnClase(const QString& idClase) {
-    QString nombreArchivo = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/clase_" + idClase + ".clas";
+    QString rutaClase = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/" + idClase;
+    QString nombreArchivo = rutaClase + "/estudiantes.clas";
     QFile file(nombreArchivo);
-
     QList<QString> usuariosMatriculados;
 
-    if (!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "No se pudo abrir el archivo para la clase" << idClase;
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "No se pudo abrir el archivo de estudiantes para la clase" << idClase;
         return usuariosMatriculados;
     }
 
@@ -240,7 +272,15 @@ QList<QString> manejoCuentas::obtenerUsuariosMatriculadosEnClase(const QString& 
         QString usuario = in.readLine();
         usuariosMatriculados.append(usuario);
     }
-
     file.close();
     return usuariosMatriculados;
+}
+
+QString manejoCuentas::obtenerIDClaseXNombre(const QString& nombreClase) {
+    for (const auto& clase : clases) {
+        if (clase.getNombre() == nombreClase) {
+            return clase.getID();
+        }
+    }
+    return "";
 }

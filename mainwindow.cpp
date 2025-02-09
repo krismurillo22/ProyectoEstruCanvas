@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include "manejocuentas.h"
 #include <QInputDialog>
+#include <QDir>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -83,13 +84,6 @@ void MainWindow::on_registrarAlumnos_clicked()
 void MainWindow::on_registrarClases_clicked()
 {
     ui->submenuRegistro->setCurrentIndex(3);
-    ui->formularioRegistro->setCurrentIndex(0);
-}
-
-
-void MainWindow::on_registrarAsignar_clicked()
-{
-    ui->submenuRegistro->setCurrentIndex(4);
     ui->formularioRegistro->setCurrentIndex(0);
 }
 
@@ -611,6 +605,14 @@ void MainWindow::on_eliminarClase_clicked()
     if (ok && !claseSelec.isEmpty()) {
         for (auto it = clasesLista.begin(); it != clasesLista.end(); ++it) {
             if (it->getNombre() == claseSelec) {
+                QString rutaClase = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/" + it->getID();
+                QDir dir(rutaClase);
+                if (dir.exists()) {
+                    if (!dir.removeRecursively()) {
+                        QMessageBox::warning(this, "Error", "No se pudo eliminar la carpeta de la clase.");
+                        return;
+                    }
+                }
                 clasesLista.erase(it);
                 QMessageBox::information(this, "Éxito", "Clase eliminado correctamente.");
                 return;
@@ -723,53 +725,83 @@ void MainWindow::on_aceptarClases_clicked()
 
 void MainWindow::on_AsignarMaestro_clicked()
 {
-    ui->asignacionStacked->setCurrentIndex(1);
+    ui->formularioRegistro->setCurrentIndex(6);
     ui->tituloAsignar->setText("ASIGNAR MAESTROS");
     ui->TituloMatricula->setText("");
 
+    ui->claseComboBox->clear();
+    ui->maestroComboBox->clear();
     QList<clasesPlantilla> claseLista = manejo->obtenerListaClases();
-    QStringList opciones;
-    for (int i = 0; i < claseLista.size(); ++i) {
-        opciones.append(claseLista[i].getNombre());
-    }
-
     QList<usuarioMaestro> maestrosLista = manejo->obtenerListaMaestros();
-    QStringList nombresMaestros;
-    for (int i = 0; i < maestrosLista.size(); ++i) {
-        nombresMaestros.append(maestrosLista[i].getNombre());
+    for (auto it = claseLista.begin(); it != claseLista.end(); ++it) {
+        ui->claseComboBox->addItem(it->getNombre());
     }
 
-    ui->claseComboBox->addItems(opciones);
-    ui->maestroComboBox->addItems(nombresMaestros);
-
+    for (auto it = maestrosLista.begin(); it != maestrosLista.end(); ++it) {
+        ui->maestroComboBox->addItem(it->getNombre());
+    }
 }
 
 
 void MainWindow::on_matricularAlumnos_clicked()
 {
-    ui->asignacionStacked->setCurrentIndex(2);
+    ui->formularioRegistro->setCurrentIndex(5);
     ui->TituloMatricula->setText("MATRICULAR ALUMNO");
     ui->tituloAsignar->setText("");
 
+    ui->claseMatricularCombo->clear();
+    ui->alumnoCombobox->clear();
     QList<clasesPlantilla> claseLista = manejo->obtenerListaClases();
-    QStringList opciones;
-    for (int i = 0; i < claseLista.size(); ++i) {
-        opciones.append(claseLista[i].getNombre());
-    }
-
     QList<usuarioAlumno> alumnoLista = manejo->obtenerListaAlumnos();
-    QStringList nombresAlumnos;
-    for (int i = 0; i < alumnoLista.size(); ++i) {
-        nombresAlumnos.append(alumnoLista[i].getNombre());
+
+    for (auto it = claseLista.begin(); it != claseLista.end(); ++it) {
+        ui->claseMatricularCombo->addItem(it->getNombre());
     }
 
-    ui->claseMatricularCombo->addItems(opciones);
-    ui->alumnoCombobox->addItems(nombresAlumnos);
+    for (auto it = alumnoLista.begin(); it != alumnoLista.end(); ++it) {
+        ui->alumnoCombobox->addItem(it->getNombre());
+    }
 }
 
 
 void MainWindow::on_aceptarAsignacion_clicked()
 {
+    QString nombre = ui->claseComboBox->currentText();
+    QString user= ui->maestroComboBox->currentText();
 
+    QString id= manejo->obtenerIDClaseXNombre(nombre);
+
+    if (!manejo->matricularUsuarioEnClase(id, user, true)) {
+        QMessageBox::warning(nullptr, "Error", "Ya está asignado un maestro en esta clase.");
+    } else {
+        QMessageBox::information(nullptr, "Éxito", "El maestro ha sido asignado correctamente.");
+    }
+}
+
+
+void MainWindow::on_registrarAsignacion_clicked()
+{
+    //Ni idea de donde esta
+}
+
+void MainWindow::on_registrarAsignar_2_clicked()
+{
+    ui->submenuRegistro->setCurrentIndex(4);
+    ui->formularioRegistro->setCurrentIndex(0);
+}
+
+
+
+void MainWindow::on_aceptarMatricula_clicked()
+{
+    QString nombre = ui->claseMatricularCombo->currentText();
+    QString user= ui->alumnoCombobox->currentText();
+
+    QString id= manejo->obtenerIDClaseXNombre(nombre);
+    if (!manejo->matricularUsuarioEnClase(id, user, false)) {
+        QMessageBox::warning(nullptr, "Error", "El usuario ya está matriculado en esta clase.");
+    } else {
+        QMessageBox::information(nullptr, "Éxito", "El usuario ha sido matriculado correctamente.");
+    }
 }
 

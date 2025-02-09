@@ -35,8 +35,6 @@ private slots:
 
     void on_registrarClases_clicked();
 
-    void on_registrarAsignar_clicked();
-
     void on_agregarMaestro_clicked();
 
     void on_modificarMaestro_clicked();
@@ -77,11 +75,13 @@ private slots:
 
     void on_aceptarAsignacion_clicked();
 
+    void on_registrarAsignacion_clicked();
+
+    void on_registrarAsignar_2_clicked();
+
+    void on_aceptarMatricula_clicked();
+
 private:
     Ui::MainWindow *ui;
-
-    //usuarioAlumno alumnoDefault;
-    //usuarioMaestro maestroDefault;
-    //UsuarioRegistro registroDefault;
 };
 #endif // MAINWINDOW_H
