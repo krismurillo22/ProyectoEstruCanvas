@@ -6,6 +6,8 @@
 #include "usuariomaestro.h"
 #include "UsuarioRegistro.h"
 #include "manejocuentas.h"
+#include "pregunta.h"
+#include "examen.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -20,6 +22,7 @@ public:
     ~MainWindow();
     manejoCuentas *manejo;
 
+    QString maestro;
 private slots:
     void on_pushButton_clicked();
 
@@ -75,13 +78,24 @@ private slots:
 
     void on_aceptarAsignacion_clicked();
 
-    void on_registrarAsignacion_clicked();
-
     void on_registrarAsignar_2_clicked();
 
     void on_aceptarMatricula_clicked();
 
+    void on_examenesMaestro_clicked();
+
+    void on_tareasMaestro_clicked();
+
+    void on_crearExamen_clicked();
+
+    void on_agregarPregunta_clicked();
+
+    void on_nuevaTarea_clicked();
+
+    void on_nuevoExamen_clicked();
+
 private:
     Ui::MainWindow *ui;
+    QVector<Pregunta> preguntas;
 };
 #endif // MAINWINDOW_H

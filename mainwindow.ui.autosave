@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="ingresar">
      <widget class="QLabel" name="label">
@@ -1668,7 +1668,7 @@ border: none;</string>
        </rect>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page_11"/>
       <widget class="QWidget" name="page_12">

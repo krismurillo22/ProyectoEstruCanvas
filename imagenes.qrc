@@ -10,5 +10,6 @@
         <file>Fondos/FormularioCRegistro.png</file>
         <file>Fondos/AsignarMaestro.png</file>
         <file>Fondos/MatricularMateria.png</file>
+        <file>Fondos/Examen.png</file>
     </qresource>
 </RCC>

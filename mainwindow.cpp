@@ -5,6 +5,8 @@
 #include "manejocuentas.h"
 #include <QInputDialog>
 #include <QDir>
+#include "examen.h"
+#include "pregunta.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -36,6 +38,8 @@ void MainWindow::on_pushButton_clicked()
                 ui->stackedWidget->setCurrentIndex(1);
             } else if (tipoCuenta == "maestro") {
                 ui->stackedWidget->setCurrentIndex(2);
+                maestro = usuario;
+                ui->nombreUsuarioMaestro->setText("Bienvenido" + maestro);
             } else if (tipoCuenta == "alumno") {
                 ui->stackedWidget->setCurrentIndex(3);
             }
@@ -778,12 +782,6 @@ void MainWindow::on_aceptarAsignacion_clicked()
     }
 }
 
-
-void MainWindow::on_registrarAsignacion_clicked()
-{
-    //Ni idea de donde esta
-}
-
 void MainWindow::on_registrarAsignar_2_clicked()
 {
     ui->submenuRegistro->setCurrentIndex(4);
@@ -803,5 +801,91 @@ void MainWindow::on_aceptarMatricula_clicked()
     } else {
         QMessageBox::information(nullptr, "Éxito", "El usuario ha sido matriculado correctamente.");
     }
+}
+
+
+void MainWindow::on_examenesMaestro_clicked()
+{
+    ui->submenuMaestro->setCurrentIndex(1);
+    QList<QString> maestroLista = manejo->obtenerClasesDeMaestro(maestro);
+
+    ui->claseCombo->clear();
+    for (int i = 0; i < maestroLista.size(); ++i) {
+        ui->claseCombo->addItem(maestroLista[i]);
+    }
+}
+
+
+void MainWindow::on_tareasMaestro_clicked()
+{
+    ui->submenuMaestro->setCurrentIndex(2);
+}
+
+
+void MainWindow::on_crearExamen_clicked()
+{
+    QString clase= ui->claseCombo->currentText();
+    QString idClase= manejo->obtenerIDClaseXNombre(clase);
+    QDateTime tiempo= ui->horaInicio->dateTime();
+    int duracion = ui->horaComboBox->currentText().toInt();
+    int puntaje = ui->valorExamen->currentText().toInt();
+
+    Examen nuevoExamen(idClase, tiempo, duracion, puntaje);
+
+    for (int i = 0; i < preguntas.size(); i++) {
+        Pregunta p = preguntas[i];
+        nuevoExamen.agregarPregunta(p);
+    }
+
+    if (nuevoExamen.guardar()) {
+        QMessageBox::information(this, "Éxito", "Examen guardado correctamente.");
+        preguntas.clear();
+        ui->preguntas->clear();
+    } else {
+        QMessageBox::warning(this, "Error", "No se pudo guardar el examen.");
+    }
+
+}
+
+
+void MainWindow::on_agregarPregunta_clicked()
+{
+    QString txt = ui->pregunta->text();
+    QString tipo = ui->tipoPreguntaCombo->currentText();
+
+    int tipoInt;
+    if (tipo== "Verdadero o Falso"){
+        tipoInt=0;
+    }else if(tipo == "Selección Múltiple"){
+        tipoInt=1;
+    }else{
+        tipoInt=2;
+    }
+
+    QString respuestaCorr= ui->respuestaCorrecta->text();
+    QString respuestaInco=ui->respuestasIncorrectas->text();
+
+    Pregunta nuevaPregunta(txt, respuestaCorr, respuestaInco, tipoInt);
+    preguntas.append(nuevaPregunta);
+
+    QString preguntasTxt;
+    for (int i = 0; i < preguntas.size(); i++) {
+        preguntasTxt += "Pregunta: "+ preguntas[i].obtenerTexto() +
+                "\nRespuesta Correcta: " + preguntas[i].obtenerRespuestaCorrecta() +
+                "\nRespuestas Incorrectas: "+ preguntas[i].obtenerRespuestaIncorrecta()+ "\n\n";
+    }
+    ui->preguntas->setText(preguntasTxt);
+}
+
+
+void MainWindow::on_nuevaTarea_clicked()
+{
+
+}
+
+
+void MainWindow::on_nuevoExamen_clicked()
+{
+    ui->stackedWidget_2->setCurrentIndex(1);
 }
 

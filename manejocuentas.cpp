@@ -284,3 +284,52 @@ QString manejoCuentas::obtenerIDClaseXNombre(const QString& nombreClase) {
     }
     return "";
 }
+
+usuarioMaestro manejoCuentas::obtenerMaestroXUser(const QString& user) {
+   usuarioMaestro h;
+    for (const auto& maestro : maestros) {
+        if (maestro.getUser() == user) {
+            h = maestro;
+            return h;
+        }
+    }
+    return h;
+}
+
+QList<QString> manejoCuentas::obtenerClasesDeMaestro(const QString& usuarioMaestro) {
+    QList<QString> clasesMatriculadas;
+    QString nombre= obtenerMaestroXUser(usuarioMaestro).getNombre();
+    for (int i = 0; i < static_cast<int>(clases.size()); ++i){
+        QString idClase = clases[i].getID();
+        QString rutaClase = QDir::toNativeSeparators("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/" + clases[i].getID());
+        QString nombreArchivo = QDir(rutaClase).filePath("estudiantes.clas");
+
+        if (!QDir(rutaClase).exists()) {
+            qDebug() << "El directorio de la clase no existe:" << rutaClase;
+            continue;
+        }
+
+        if (!QFile::exists(nombreArchivo)) {
+            qDebug() << "El archivo de estudiantes no existe:" << nombreArchivo;
+            continue;
+        }
+
+        QFile file(nombreArchivo);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qDebug() << "No se pudo abrir el archivo de estudiantes para la clase" << idClase << "Error:" << file.errorString();
+            continue;
+        }
+
+        QTextStream in(&file);
+        QString contenido = in.readAll();
+        file.close();
+
+        if (contenido.contains("M:" + nombre)) {
+            qDebug() << "Maestro encontrado en la clase:" << clases[i].getNombre();
+            clasesMatriculadas.append(clases[i].getNombre());
+        }
+    }
+
+    return clasesMatriculadas;
+}
+

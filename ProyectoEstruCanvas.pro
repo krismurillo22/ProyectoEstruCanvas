@@ -11,17 +11,21 @@ CONFIG += c++11
 SOURCES += \
     UsuarioRegistro.cpp \
     clasesplantilla.cpp \
+    examen.cpp \
     main.cpp \
     mainwindow.cpp \
     manejocuentas.cpp \
+    pregunta.cpp \
     usuarioalumno.cpp \
     usuariomaestro.cpp
 
 HEADERS += \
     UsuarioRegistro.h \
     clasesplantilla.h \
+    examen.h \
     mainwindow.h \
     manejocuentas.h \
+    pregunta.h \
     usuarioalumno.h \
     usuariomaestro.h
 

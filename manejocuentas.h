@@ -49,6 +49,8 @@ public:
     QList<QString> obtenerUsuariosMatriculadosEnClase(const QString& claseID);
 
     QString obtenerIDClaseXNombre(const QString& nombreClase);
+    usuarioMaestro obtenerMaestroXUser(const QString& user);
+    QList<QString> obtenerClasesDeMaestro(const QString& usuarioMaestro);
 
 private:
     std::vector<usuarioAlumno> alumnos;
