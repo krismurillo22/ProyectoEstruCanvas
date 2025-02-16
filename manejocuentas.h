@@ -10,6 +10,16 @@
 #include "usuariomaestro.h"
 #include "UsuarioRegistro.h"
 #include "clasesplantilla.h"
+#include "examen.h"
+#include "tarea.h"
+#include <stack>
+
+//Esto es para el arreglo de examenes para que sea mas facil
+struct ExamenInfo {
+    QString nombreExamen;
+    QString idClase;
+    QString rutaArchivo;
+};
 
 class manejoCuentas
 {
@@ -37,6 +47,9 @@ public:
     template <typename T>
     void guardarUsuarios(const QString& archivo, const std::vector<T>& lista);
 
+    void cargarExamenes();
+    void guardarExamenes();
+
     QString validarUsuario(const QString& usuario, const QString& password);
 
     QList<usuarioMaestro> obtenerListaMaestros() const;
@@ -51,12 +64,28 @@ public:
     QString obtenerIDClaseXNombre(const QString& nombreClase);
     usuarioMaestro obtenerMaestroXUser(const QString& user);
     QList<QString> obtenerClasesDeMaestro(const QString& usuarioMaestro);
+    void registrarExamen(const QString& nombreExamen, const QString& idClase, const QDateTime& fechaHora, int duracion, int puntaje, const QVector<Pregunta>& preguntas);
+    QList<QString> obtenerExamenesDeMaestro(const QString& usuarioMaestro);
+    void eliminarExamen(const QString& nombreExamen);
+
+    void guardarTareas();
+    void cargarTareas();
+    void agregarTarea(const QString& clase, const QString& titulo, const QString& descripcion, int prioridad, int tiempoEstimado, const QString& estado, const QString& tipoArchivo, const QStringList& recursos);
+    std::vector<tarea>& getTareas();
+    void marcarTareaComoCompletada(const QString& titulo);
+    void restaurarTareas();
+    void restaurarTarea(const tarea& t);
+
 
 private:
     std::vector<usuarioAlumno> alumnos;
     std::vector<UsuarioRegistro> registros;
     std::vector<usuarioMaestro> maestros;
     std::vector<clasesPlantilla> clases;
+    std::vector<ExamenInfo> examenes;
+    std::vector<tarea> tareas;
+    std::stack<tarea> tareasCompletadas;
+
 
     QString archivoMaestros = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_maestros.mad";
     QString archivoRegistros = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_registro.dat";

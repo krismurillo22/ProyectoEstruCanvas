@@ -15,6 +15,8 @@ manejoCuentas::manejoCuentas() {
     cargarUsuarios(archivoRegistros, registros);
     cargarUsuarios(archivoAlumnos, alumnos);
     cargarUsuarios(archivoClases, clases);
+    cargarExamenes();
+    cargarTareas();
 }
 
 manejoCuentas::~manejoCuentas() {
@@ -23,6 +25,8 @@ manejoCuentas::~manejoCuentas() {
     guardarUsuarios(archivoRegistros, registros);
     guardarUsuarios(archivoAlumnos, alumnos);
     guardarUsuarios(archivoClases, clases);
+    guardarExamenes();
+    guardarTareas();
 }
 
 void manejoCuentas::agregarMaestro(const usuarioMaestro& maestro) {
@@ -301,22 +305,19 @@ QList<QString> manejoCuentas::obtenerClasesDeMaestro(const QString& usuarioMaest
     QString nombre= obtenerMaestroXUser(usuarioMaestro).getNombre();
     for (int i = 0; i < static_cast<int>(clases.size()); ++i){
         QString idClase = clases[i].getID();
-        QString rutaClase = QDir::toNativeSeparators("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/" + clases[i].getID());
+        QString rutaClase = QDir::toNativeSeparators("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/" + idClase);
         QString nombreArchivo = QDir(rutaClase).filePath("estudiantes.clas");
 
         if (!QDir(rutaClase).exists()) {
-            qDebug() << "El directorio de la clase no existe:" << rutaClase;
             continue;
         }
 
         if (!QFile::exists(nombreArchivo)) {
-            qDebug() << "El archivo de estudiantes no existe:" << nombreArchivo;
             continue;
         }
 
         QFile file(nombreArchivo);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qDebug() << "No se pudo abrir el archivo de estudiantes para la clase" << idClase << "Error:" << file.errorString();
             continue;
         }
 
@@ -333,3 +334,183 @@ QList<QString> manejoCuentas::obtenerClasesDeMaestro(const QString& usuarioMaest
     return clasesMatriculadas;
 }
 
+void manejoCuentas::registrarExamen(const QString& nombreExamen, const QString& idClase, const QDateTime& fechaHora, int duracion, int puntaje, const QVector<Pregunta>& preguntas) {
+    QString rutaArchivo = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/" + idClase + "/" + fechaHora.toString("yyyyMMdd_HHmm") + ".exam";
+
+    Examen examen(idClase, fechaHora, duracion, puntaje);
+    for (const auto& pregunta : preguntas) {
+        examen.agregarPregunta(pregunta);
+    }
+    if (!examen.guardar()) {
+        qDebug() << "Error al guardar el examen en:" << rutaArchivo;
+        return;
+    }
+    examenes.push_back({nombreExamen, idClase, rutaArchivo});
+}
+
+void manejoCuentas::cargarExamenes() {
+    QFile file("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/examenes.gen");
+    if (!file.exists()) {
+        qDebug() << "El archivo de exámenes no existe. Se creará al registrar el primer examen.";
+        return;
+    }
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "No se pudo abrir el archivo de exámenes.";
+        return;
+    }
+
+    examenes.clear();
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        QString linea = in.readLine();
+        QStringList partes = linea.split("|");
+        if (partes.size() < 3)
+            continue;
+        examenes.push_back({ partes[0], partes[1], partes[2] });
+    }
+    file.close();
+}
+
+void manejoCuentas::guardarExamenes() {
+    QFile file("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/examenes.gen");
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qDebug() << "No se pudo abrir el archivo para guardar los examenes.";
+        return;
+    }
+
+    QTextStream out(&file);
+    for (const auto &examen : examenes) {
+        out << examen.nombreExamen << "|" << examen.idClase << "|" << examen.rutaArchivo << "\n";
+    }
+    file.close();
+    qDebug() << "Examenes guardados.";
+}
+
+QList<QString> manejoCuentas::obtenerExamenesDeMaestro(const QString& usuarioMaestro) {
+    QList<QString> examenesDelMaestro;
+    QList<QString> clasesDelMaestro = obtenerClasesDeMaestro(usuarioMaestro);
+    for (int i = 0; i < examenes.size(); ++i) {
+        for (int j = 0; j < clasesDelMaestro.size(); ++j) {
+            QString idClase = obtenerIDClaseXNombre(clasesDelMaestro[j]);
+            if (examenes[i].idClase == idClase) {
+                qDebug() << "Examen encontrado: " << examenes[i].nombreExamen;
+                examenesDelMaestro.append(examenes[i].idClase+ " - " + clasesDelMaestro[j] + " - " + examenes[i].nombreExamen);
+            }
+        }
+    }
+
+    return examenesDelMaestro;
+}
+
+void manejoCuentas::eliminarExamen(const QString& nombreExamen) {
+    for (auto it = examenes.begin(); it != examenes.end(); ++it) {
+        if (it->nombreExamen == nombreExamen) {
+            examenes.erase(it);
+            qDebug() << "Examen eliminado del vector: " << nombreExamen;
+            return;
+        }
+    }
+}
+
+
+void manejoCuentas::agregarTarea(const QString& clase, const QString& titulo, const QString& descripcion, int prioridad, int tiempoEstimado, const QString& estado, const QString& tipoArchivo, const QStringList& recursos) {
+    tarea nuevaTarea(clase, titulo, descripcion, prioridad, tiempoEstimado, estado, tipoArchivo, recursos);
+    tareas.push_back(nuevaTarea);
+}
+
+std::vector<tarea>& manejoCuentas::getTareas() {
+    return tareas;
+}
+
+void manejoCuentas::guardarTareas() {
+    QFile file("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/tareas.gen");
+    if (!file.open(QIODevice::WriteOnly)) {
+        qDebug() << "No se pudo abrir el archivo para guardar las tareas.";
+        return;
+    }
+
+    QDataStream out(&file);
+    out << tareas.size();
+
+    for (const tarea& t : tareas) {
+        out << t.getClase() << t.getTitulo() << t.getDescripcion() << t.getPrioridad()
+            << t.getTiempoEstimado() << t.getEstado() << t.getTipoArchivo() << t.getRecursos();
+    }
+
+    file.close();
+    qDebug() << "Tareas guardadas en el archivo general.";
+}
+
+void manejoCuentas::cargarTareas() {
+    QFile file("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/tareas.gen");
+    if (!file.exists()) {
+        qDebug() << "El archivo de tareas no existe. Se creará al registrar la primera tarea.";
+        return;
+    }
+
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "No se pudo abrir el archivo de tareas.";
+        return;
+    }
+
+    QDataStream in(&file);
+    int tareaCount = 0;
+    in >> tareaCount;
+
+    tareas.clear();
+
+    for (int i = 0; i < tareaCount; ++i) {
+        QString clase, titulo, descripcion, estado, tipoArchivo;
+        int prioridad, tiempoEstimado;
+        QStringList recursos;
+
+        in >> clase >> titulo >> descripcion >> prioridad >> tiempoEstimado >> estado >> tipoArchivo >> recursos;
+
+        tarea nuevaTarea(clase, titulo, descripcion, prioridad, tiempoEstimado, estado, tipoArchivo, recursos);
+        tareas.push_back(nuevaTarea);
+    }
+
+    file.close();
+    qDebug() << "Tareas cargadas desde el archivo general.";
+}
+
+void manejoCuentas::marcarTareaComoCompletada(const QString& titulo) {
+    for (auto it = tareas.begin(); it != tareas.end(); ++it) {
+        if (it->getTitulo() == titulo) {
+            if (it->getEstado() == "Incompleto") {
+                tareasCompletadas.push(*it);  // Mover la tarea a la pila
+                it->setEstado("Completada");  // Actualizar el estado de la tarea
+                tareas.erase(it);  // Eliminar de la lista original
+                qDebug() << "Tarea completada y movida a la pila: " << titulo;
+                guardarTareas();  // Guardar las tareas actualizadas
+                return;
+            }
+            else {
+                qDebug() << "La tarea ya está completada: " << titulo;
+            }
+        }
+    }
+    qDebug() << "No se encontró la tarea: " << titulo;
+}
+
+void manejoCuentas::restaurarTareas() {
+    if (tareasCompletadas.empty()) {
+        qDebug() << "No hay tareas completadas para restaurar.";
+        return;
+    }
+
+    while (!tareasCompletadas.empty()) {
+        tarea t = tareasCompletadas.top();
+        tareas.push_back(t);
+        tareasCompletadas.pop();
+    }
+
+    qDebug() << "Tareas restauradas desde la pila.";
+    guardarTareas();
+}
+
+void manejoCuentas::restaurarTarea(const tarea& t) {
+    tareas.push_back(t);
+    guardarTareas();
+}

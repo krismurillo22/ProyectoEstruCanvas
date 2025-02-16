@@ -16,6 +16,7 @@ SOURCES += \
     mainwindow.cpp \
     manejocuentas.cpp \
     pregunta.cpp \
+    tarea.cpp \
     usuarioalumno.cpp \
     usuariomaestro.cpp
 
@@ -26,6 +27,7 @@ HEADERS += \
     mainwindow.h \
     manejocuentas.h \
     pregunta.h \
+    tarea.h \
     usuarioalumno.h \
     usuariomaestro.h
 

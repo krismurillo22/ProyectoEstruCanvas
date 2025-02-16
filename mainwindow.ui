@@ -177,7 +177,7 @@ border: none;</string>
        </rect>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="page"/>
       <widget class="QWidget" name="page_2">
@@ -459,7 +459,7 @@ font: 75 16pt &quot;Segoe UI&quot;;</string>
        </rect>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>6</number>
       </property>
       <widget class="QWidget" name="page_6"/>
       <widget class="QWidget" name="maestros">
@@ -1580,7 +1580,7 @@ font: 75 16pt &quot;Segoe UI&quot;;</string>
         <property name="styleSheet">
          <string notr="true">background-color: rgb(6, 6, 92);
 color: white;
-font: 75 16pt &quot;Segoe UI&quot;;</string>
+font: 75 14pt &quot;Segoe UI&quot;;</string>
         </property>
         <property name="text">
          <string>Eliminar tareas completadas</string>
@@ -1668,7 +1668,7 @@ border: none;</string>
        </rect>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="page_11"/>
       <widget class="QWidget" name="page_12">
@@ -1956,6 +1956,375 @@ font: 87 14pt &quot;Segoe UI Black&quot;;</string>
         </property>
         <property name="text">
          <string/>
+        </property>
+       </widget>
+       <widget class="QLabel" name="tituloMaestroStacked">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>30</y>
+          <width>1311</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(8, 19, 110);
+font: 87 24pt &quot;Segoe UI Black&quot;;</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="page_13">
+       <widget class="QLabel" name="label_12">
+        <property name="geometry">
+         <rect>
+          <x>-4</x>
+          <y>2</y>
+          <width>1311</width>
+          <height>771</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="imagenes.qrc">:/Fondos/Tareas.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="tituloTareasMaestro">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>50</y>
+          <width>1311</width>
+          <height>71</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(8, 19, 110);
+font: 87 24pt &quot;Segoe UI Black&quot;;</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="comboClasetarea">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>180</y>
+          <width>291</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: white;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="comboPrioridad">
+        <property name="geometry">
+         <rect>
+          <x>420</x>
+          <y>180</y>
+          <width>261</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: white;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>2</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>3</string>
+         </property>
+        </item>
+       </widget>
+       <widget class="QDateTimeEdit" name="tiempoInicio">
+        <property name="geometry">
+         <rect>
+          <x>710</x>
+          <y>180</y>
+          <width>251</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: white;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+        </property>
+       </widget>
+       <widget class="QDateTimeEdit" name="tiempoFinalizacion">
+        <property name="geometry">
+         <rect>
+          <x>990</x>
+          <y>180</y>
+          <width>221</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: white;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+        </property>
+       </widget>
+       <widget class="QTextEdit" name="descripciontarea">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>400</y>
+          <width>1131</width>
+          <height>61</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: transparent;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="estadoTarea">
+        <property name="geometry">
+         <rect>
+          <x>660</x>
+          <y>530</y>
+          <width>201</width>
+          <height>71</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: transparent;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+        </property>
+        <property name="inputMask">
+         <string/>
+        </property>
+        <property name="text">
+         <string>Incompleta</string>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="comboBox_2">
+        <property name="geometry">
+         <rect>
+          <x>920</x>
+          <y>560</y>
+          <width>291</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: white;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>PDF</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>PDF \ DOCX</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>DOCX</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>MP4</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ZIP</string>
+         </property>
+        </item>
+       </widget>
+       <widget class="QPushButton" name="crearTarea">
+        <property name="geometry">
+         <rect>
+          <x>920</x>
+          <y>640</y>
+          <width>301</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: transparent;
+border: none;</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="agregarRecursos">
+        <property name="geometry">
+         <rect>
+          <x>190</x>
+          <y>480</y>
+          <width>191</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(6, 6, 92);
+color: white;
+font: 75 12pt &quot;Segoe UI&quot;;</string>
+        </property>
+        <property name="text">
+         <string>Agregar Recursos</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="tituloTarea">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>290</y>
+          <width>1131</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: transparent;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+        </property>
+       </widget>
+       <widget class="QTextEdit" name="textorecursos">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>530</y>
+          <width>511</width>
+          <height>71</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: transparent;
+font: 75 14pt &quot;Segoe UI&quot;;
+border: none;
+color: rgb(8, 19, 110);</string>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="page_14">
+       <widget class="QLabel" name="tituloDeListaTarea">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>50</y>
+          <width>1311</width>
+          <height>71</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(8, 19, 110);
+font: 87 24pt &quot;Segoe UI Black&quot;;</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QTextEdit" name="textEditPendiente">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>150</y>
+          <width>1131</width>
+          <height>471</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: white;
+font: 75 16pt &quot;Segoe UI&quot;;
+border: black;
+color: rgb(8, 19, 110);</string>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="boton1Tareas">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>660</y>
+          <width>551</width>
+          <height>71</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgba(8, 19, 110, 1);
+color: white;
+font: 75 16pt &quot;Segoe UI&quot;;</string>
+        </property>
+        <property name="text">
+         <string>POR ORDEN FIFO</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="boton2Listas">
+        <property name="geometry">
+         <rect>
+          <x>670</x>
+          <y>660</y>
+          <width>551</width>
+          <height>71</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(6, 6, 92);
+color: white;
+font: 75 16pt &quot;Segoe UI&quot;;</string>
+        </property>
+        <property name="text">
+         <string>POR PRIORIDAD</string>
         </property>
        </widget>
       </widget>

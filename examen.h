@@ -21,6 +21,13 @@ public:
 
     void agregarPregunta(const Pregunta &pregunta);
     bool guardar();
+    QDateTime getFechaHora()const;
+    QString getIdClase()const;
+    int getDuracion()const;
+    int getPuntaje()const;
+
+    QVector<Pregunta> getPreguntas() const;
+
 };
 
 

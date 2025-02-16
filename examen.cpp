@@ -10,7 +10,7 @@ void Examen::agregarPregunta(const Pregunta &pregunta) {
 bool Examen::guardar() {
     QString ruta = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/" + idClase;
     QDir().mkpath(ruta);
-    QFile archivo(ruta + fechaHora.toString("yyyyMMdd_hhmm") + ".exam");
+    QFile archivo(ruta + "/" + fechaHora.toString("yyyyMMdd_HHmm") + ".exam");
 
     if (!archivo.open(QIODevice::WriteOnly))
         return false;
@@ -24,4 +24,24 @@ bool Examen::guardar() {
 
     archivo.close();
     return true;
+}
+
+QDateTime Examen::getFechaHora()const {
+    return fechaHora;
+}
+
+QString Examen::getIdClase()const {
+    return idClase;
+}
+
+int Examen::getDuracion()const {
+    return duracion;
+}
+
+int Examen::getPuntaje()const {
+    return puntaje;
+}
+
+QVector<Pregunta> Examen::getPreguntas() const {
+    return preguntas;
 }

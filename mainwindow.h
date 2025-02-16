@@ -94,8 +94,29 @@ private slots:
 
     void on_nuevoExamen_clicked();
 
+    void on_modificarExamen_clicked();
+
+    void on_eliminarExamen_clicked();
+
+    void on_crearTarea_clicked();
+
+    void on_agregarRecursos_clicked();
+
+    void on_tareasPendientes_clicked();
+
+    void on_eliminarTareas_clicked();
+
+    void on_ordenarTareas_clicked();
+
+    void on_ejecutarTareas_clicked();
+
+    void on_boton1Tareas_clicked();
+
+    void on_boton2Listas_clicked();
+
 private:
     Ui::MainWindow *ui;
     QVector<Pregunta> preguntas;
+    std::stack<tarea> tareasCompletadas;
 };
 #endif // MAINWINDOW_H
