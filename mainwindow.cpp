@@ -11,7 +11,7 @@
 #include <queue>
 #include <QTimer>
 #include <QThread>
-
+#include <QVBoxLayout>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -47,6 +47,7 @@ void MainWindow::on_pushButton_clicked()
                 ui->nombreUsuarioMaestro->setText("Bienvenido " + maestro);
             } else if (tipoCuenta == "alumno") {
                 ui->stackedWidget->setCurrentIndex(3);
+                alumnoRegistrado = usuario;
             }
             ui->usuario->clear();
             ui->password->clear();
@@ -827,11 +828,12 @@ void MainWindow::on_crearExamen_clicked()
         QString clase= ui->claseCombo->currentText();
         QString idClase= manejo->obtenerIDClaseXNombre(clase);
         QDateTime tiempo= ui->horaInicio->dateTime();
-        int duracion = ui->horaComboBox->currentText().toInt();
+        int duracion = ui->comboBoxDuracion->currentText().toInt();
         int puntaje = ui->valorExamen->currentText().toInt();
         QString nombreExamen = tiempo.toString("yyyyMMdd_HHmm");
-
-        manejo->registrarExamen(nombreExamen, idClase, tiempo, duracion, puntaje, preguntas);
+        QString titulo = ui->tituloExamen->text();
+        qDebug() << "Duración seleccionada antes de guardar: " << duracion;
+        manejo->registrarExamen(titulo, idClase, tiempo, duracion, puntaje, preguntas);
         preguntas.clear();
         ui->preguntas->clear();
         QMessageBox::information(this, "Éxito", "Examen guardado correctamente.");
@@ -842,6 +844,7 @@ void MainWindow::on_crearExamen_clicked()
         QDateTime tiempo = ui->horaInicio->dateTime();
         int duracion = ui->horaComboBox->currentText().toInt();
         int puntaje = ui->valorExamen->currentText().toInt();
+        QString titulo = ui->tituloExamen->text();
 
         QString examenSelec = ui->claseCombo->currentData().toString();
         QString archivoRuta = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/" + idClase + "/" + examenSelec;
@@ -958,12 +961,14 @@ void MainWindow::on_modificarExamen_clicked()
         QDataStream in(&archivo);
         QDateTime fechaHora;
         int duracion, puntaje, numPreguntas;
+        QString titulo;
 
-        in >> fechaHora >> duracion >> puntaje >> numPreguntas;
+        in >> titulo >> idClase >> fechaHora >> duracion >> puntaje >> numPreguntas;
         ui->horaInicio->setDateTime(fechaHora);
-        ui->comboBox->setCurrentText(QString::number(duracion));
+        ui->comboBoxDuracion->setCurrentText(QString::number(duracion));
         ui->valorExamen->setCurrentText(QString::number(puntaje));
         ui->periodoClases->setText(QString::number(duracion));
+        ui->tituloExamen->setText(titulo);
         QVector<Pregunta> preguntas;
         for (int i = 0; i < numPreguntas; ++i) {
             Pregunta pregunta;
@@ -1121,27 +1126,13 @@ void MainWindow::on_eliminarTareas_clicked()
     ui->boton1Tareas->setText("RESTAURAR");
     ui->tituloDeListaTarea->setText("ELIMINAR TAREAS COMPLETADAS");
     ui->textEditPendiente->clear();
-    if (tareasCompletadas.empty()) {
-        ui->textEditPendiente->setPlainText("No hay tareas completadas para restaurar.");
-        return;
-    }
-
-    for (size_t i = 0; i < manejo->getTareas().size(); ++i) {
-        if (manejo->getTareas()[i].getEstado() == "Completada") {
-            tareasCompletadas.push(manejo->getTareas()[i]);
-            ui->textEditPendiente->append("Tarea completada eliminada: " + manejo->getTareas()[i].getTitulo());
-            manejo->getTareas().erase(manejo->getTareas().begin() + i);
-            --i;
-        }
-    }
-    manejo->guardarTareas();
 }
 
 
 void MainWindow::on_ordenarTareas_clicked()
 {
     ui->stackedWidget_2->setCurrentIndex(3);
-    ui->tituloDeListaTarea->setText("ORDENAR TAREAS INCOMPLETAS");
+    ui->tituloDeListaTarea->setText("ORDENAR TAREAS");
     ui->boton1Tareas->show();
     ui->boton2Listas->show();
     ui->boton2Listas->setText("POR TIEMPO ESTIMADO DE FINALIZACION");
@@ -1160,9 +1151,10 @@ void MainWindow::on_ejecutarTareas_clicked()
 
 
 }
+
 void MainWindow::on_boton1Tareas_clicked()
 {
-    if(ui->tituloDeListaTarea->text()=="EJECUTAR TAREAS INCOMPLETAS" ){
+    if(ui->tituloDeListaTarea->text() == "EJECUTAR TAREAS INCOMPLETAS") {
         ui->textEditPendiente->clear();
         if (manejo->getTareas().empty()) {
             ui->textEditPendiente->setPlainText("No hay tareas para ejecutar.");
@@ -1170,9 +1162,9 @@ void MainWindow::on_boton1Tareas_clicked()
         }
 
         std::queue<tarea> colaTareas;
-        for (const tarea& t : manejo->getTareas()) {
-            if (t.getEstado() == "Incompleto") {
-                colaTareas.push(t);
+        for (size_t i = 0; i < manejo->getTareas().size(); ++i) {
+            if (manejo->getTareas()[i].getEstado() == "Incompleto") {
+                colaTareas.push(manejo->getTareas()[i]);
             }
         }
 
@@ -1186,53 +1178,61 @@ void MainWindow::on_boton1Tareas_clicked()
             colaTareas.pop();
 
             ui->textEditPendiente->append("Ejecutando tarea: " + t.getTitulo());
-            QThread::sleep(2);
             ui->textEditPendiente->append("Tarea completada: " + t.getTitulo());
 
             manejo->marcarTareaComoCompletada(t.getTitulo());
-            tareasCompletadas.push(t);
         }
 
         ui->textEditPendiente->append("Todas las tareas han sido completadas.");
         manejo->guardarTareas();
-    }else if(ui->tituloDeListaTarea->text()=="ORDENAR TAREAS INCOMPLETAS"){
+    }
+    else if(ui->tituloDeListaTarea->text() == "ORDENAR TAREAS") {
         std::vector<tarea>& tareas = manejo->getTareas();
 
-        for (size_t i = 0; i < tareas.size() - 1; ++i) {
-            size_t indiceMinimo = i;
-            for (size_t j = i + 1; j < tareas.size(); ++j) {
-                if (tareas[j].getTiempoEstimado() < tareas[indiceMinimo].getTiempoEstimado()) {
-                    indiceMinimo = j;
+        if (tareas.empty()) {
+            ui->textEditPendiente->setPlainText("No hay tareas para ordenar.");
+            return;
+        }
+        bool intercambiado;
+        for (size_t i = 0; i < tareas.size(); ++i) {
+            intercambiado = false;
+            for (size_t j = 0; j < tareas.size() - 1 - i; ++j) {
+                if (tareas[j].getTiempoEstimado() > tareas[j + 1].getTiempoEstimado()) {
+                    std::swap(tareas[j], tareas[j + 1]);
+                    intercambiado = true;
                 }
             }
-
-            if (indiceMinimo != i) {
-                std::swap(tareas[i], tareas[indiceMinimo]);
+            if (!intercambiado){
+                break;
             }
         }
 
         ui->textEditPendiente->clear();
-        for (const tarea& t : tareas) {
-            ui->textEditPendiente->append("Tarea: " + t.getTitulo() + " - Tiempo estimado: " + QString::number(t.getTiempoEstimado()) + " horas - Estado: "+ t.getEstado() );
+        for (size_t i = 0; i < tareas.size(); ++i) {
+            ui->textEditPendiente->append("Tarea: " + tareas[i].getTitulo() + " - Tiempo estimado: " + QString::number(tareas[i].getTiempoEstimado()) + " horas - Estado: " + tareas[i].getEstado());
         }
-    }else if(ui->tituloDeListaTarea->text()=="ELIMINAR TAREAS COMPLETADAS"){
-        if (tareasCompletadas.empty()) {
-            ui->textEditPendiente->append("No hay tareas para restaurar.");
+    }
+    else if(ui->tituloDeListaTarea->text() == "ELIMINAR TAREAS COMPLETADAS") {
+        std::vector<tarea>& tareas = manejo->getTareas();
+
+        if (tareas.empty()) {
+            ui->textEditPendiente->setPlainText("No hay tareas para restaurar.");
             return;
         }
+        for (size_t i = 0; i < tareas.size(); ++i) {
+            if (tareas[i].getEstado() == "Completada") {
+                tareas[i].setEstado("Incompleto");
+            }
+        }
 
-        tarea t = tareasCompletadas.top();
-        tareasCompletadas.pop();
-        manejo->getTareas().push_back(t);
-        ui->textEditPendiente->append("Tarea restaurada: " + t.getTitulo());
+        ui->textEditPendiente->append("Todas las tareas completadas han sido restauradas.");
         manejo->guardarTareas();
     }
 }
 
-
 void MainWindow::on_boton2Listas_clicked()
 {
-    if(ui->tituloDeListaTarea->text()=="EJECUTAR TAREAS INCOMPLETAS" ){
+    if(ui->tituloDeListaTarea->text() == "EJECUTAR TAREAS INCOMPLETAS") {
         ui->textEditPendiente->clear();
         if (manejo->getTareas().empty()) {
             ui->textEditPendiente->setPlainText("No hay tareas para ejecutar.");
@@ -1245,9 +1245,10 @@ void MainWindow::on_boton2Listas_clicked()
 
         std::priority_queue<tarea, std::vector<tarea>, decltype(comparador)> colaTareas(comparador);
 
-        for (const tarea& t : manejo->getTareas()) {
-            if (t.getEstado() == "Incompleto") {
-                colaTareas.push(t);
+        // Colocamos las tareas incompletas en la cola
+        for (size_t i = 0; i < manejo->getTareas().size(); ++i) {
+            if (manejo->getTareas()[i].getEstado() == "Incompleto") {
+                colaTareas.push(manejo->getTareas()[i]);
             }
         }
 
@@ -1256,23 +1257,29 @@ void MainWindow::on_boton2Listas_clicked()
             return;
         }
 
+        // Ejecutar las tareas en la cola por prioridad
         while (!colaTareas.empty()) {
             tarea t = colaTareas.top();
             colaTareas.pop();
 
             ui->textEditPendiente->append("Ejecutando tarea: " + t.getTitulo());
-            QThread::sleep(2);
             ui->textEditPendiente->append("Tarea completada: " + t.getTitulo());
 
             manejo->marcarTareaComoCompletada(t.getTitulo());
-            tareasCompletadas.push(t);
         }
 
         ui->textEditPendiente->append("Todas las tareas han sido completadas.");
         manejo->guardarTareas();
-    }else if(ui->tituloDeListaTarea->text()=="ORDENAR TAREAS INCOMPLETAS"){
+    }
+    else if(ui->tituloDeListaTarea->text() == "ORDENAR TAREAS") {
         std::vector<tarea>& tareas = manejo->getTareas();
 
+        if (tareas.empty()) {
+            ui->textEditPendiente->setPlainText("No hay tareas para ordenar.");
+            return;
+        }
+
+        // Ordenamiento por prioridad usando for normal
         bool intercambiado;
         for (size_t i = 0; i < tareas.size(); ++i) {
             intercambiado = false;
@@ -1282,24 +1289,81 @@ void MainWindow::on_boton2Listas_clicked()
                     intercambiado = true;
                 }
             }
-            if (!intercambiado){
+            if (!intercambiado) {
                 break;
             }
         }
 
         ui->textEditPendiente->clear();
-        for (const tarea& t : tareas) {
-            ui->textEditPendiente->append("Tarea: " + t.getTitulo() + " - Prioridad: " + QString::number(t.getPrioridad()) +" - Estado: "+ t.getEstado());
+        for (size_t i = 0; i < tareas.size(); ++i) {
+            ui->textEditPendiente->append("Tarea: " + tareas[i].getTitulo() + " - Prioridad: " + QString::number(tareas[i].getPrioridad()) + " - Estado: " + tareas[i].getEstado());
         }
-    }else if(ui->tituloDeListaTarea->text()=="ELIMINAR TAREAS COMPLETADAS"){
-        if (tareasCompletadas.empty()) {
+    }
+    else if(ui->tituloDeListaTarea->text() == "ELIMINAR TAREAS COMPLETADAS") {
+        std::vector<tarea>& tareas = manejo->getTareas();
+
+        if (tareas.empty()) {
             ui->textEditPendiente->append("No hay tareas para eliminar permanentemente.");
             return;
         }
-        tarea t = tareasCompletadas.top();
-        tareasCompletadas.pop();
-        ui->textEditPendiente->append("Tarea eliminada permanentemente: " + t.getTitulo());
+
+        for (size_t i = 0; i < tareas.size(); ++i) {
+            if (tareas[i].getEstado() == "Completada") {
+                tareas.erase(tareas.begin() + i);
+                --i;
+            }
+        }
+
+        ui->textEditPendiente->append("Las tareas completadas han sido eliminadas permanentemente.");
         manejo->guardarTareas();
     }
 }
 
+void MainWindow::on_examenesAlumnos_clicked()
+{
+    QList<QString> examenesDelAlumno = manejo->obtenerExamenesDeAlumno(alumnoRegistrado);
+    QScrollArea *scrollArea = findChild<QScrollArea*>("scrollArea");
+    if (!scrollArea) {
+        qDebug() << "No se encontró el QScrollArea en la UI.";
+        return;
+    }
+
+    QWidget *contenedor = new QWidget();
+    QVBoxLayout *layout = new QVBoxLayout(contenedor);
+
+    for (const QString &examen : examenesDelAlumno) {
+        QPushButton *boton = new QPushButton(examen);
+        boton->setStyleSheet("background-color: rgb(6, 6, 92);"
+                             "color: white;"
+                             "font: 75 10pt 'Segoe UI Bold';"
+                             "border-radius: 10px;"
+                             "padding: 8px;"
+                             "margin: 5px;");
+        connect(boton, &QPushButton::clicked, this, [this, examen]() {
+            mostrarExamen(examen);
+        });
+
+        layout->addWidget(boton);
+    }
+
+    contenedor->setLayout(layout);
+    scrollArea->setWidget(contenedor);
+    scrollArea->setWidgetResizable(true);
+}
+
+void MainWindow::mostrarExamen(const QString& datosExamen) {
+    Examen examen = manejo->obtenerExamenDesdeArchivo(datosExamen);
+
+    if (examen.getTitulo().isEmpty()) {
+        qDebug() << "No se pudo cargar el examen.";
+        return;
+    }
+    ui->stackedWidget_3->setCurrentIndex(1);
+
+    ui->labelTitulo->setText(examen.getTitulo());
+    ui->labelValor->setText(QString::number(examen.getPuntaje()));
+    ui->labelDuracion->setText(QString::number(examen.getDuracion()));
+    ui->labelClase->setText(examen.getIdClase());
+    ui->dateTimeExamen->setDateTime(examen.getFechaHora());
+
+}

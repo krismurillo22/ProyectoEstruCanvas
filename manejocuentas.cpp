@@ -337,7 +337,7 @@ QList<QString> manejoCuentas::obtenerClasesDeMaestro(const QString& usuarioMaest
 void manejoCuentas::registrarExamen(const QString& nombreExamen, const QString& idClase, const QDateTime& fechaHora, int duracion, int puntaje, const QVector<Pregunta>& preguntas) {
     QString rutaArchivo = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/" + idClase + "/" + fechaHora.toString("yyyyMMdd_HHmm") + ".exam";
 
-    Examen examen(idClase, fechaHora, duracion, puntaje);
+    Examen examen(nombreExamen, idClase, fechaHora, duracion, puntaje);
     for (const auto& pregunta : preguntas) {
         examen.agregarPregunta(pregunta);
     }
@@ -439,7 +439,7 @@ void manejoCuentas::guardarTareas() {
     }
 
     file.close();
-    qDebug() << "Tareas guardadas en el archivo general.";
+    qDebug() << "Tareas guardadas correctamente.";
 }
 
 void manejoCuentas::cargarTareas() {
@@ -472,45 +472,128 @@ void manejoCuentas::cargarTareas() {
     }
 
     file.close();
-    qDebug() << "Tareas cargadas desde el archivo general.";
+    qDebug() << "Tareas cargadas correctamente. Total: " << tareas.size();
 }
 
 void manejoCuentas::marcarTareaComoCompletada(const QString& titulo) {
-    for (auto it = tareas.begin(); it != tareas.end(); ++it) {
-        if (it->getTitulo() == titulo) {
-            if (it->getEstado() == "Incompleto") {
-                tareasCompletadas.push(*it);  // Mover la tarea a la pila
-                it->setEstado("Completada");  // Actualizar el estado de la tarea
-                tareas.erase(it);  // Eliminar de la lista original
-                qDebug() << "Tarea completada y movida a la pila: " << titulo;
-                guardarTareas();  // Guardar las tareas actualizadas
-                return;
-            }
-            else {
-                qDebug() << "La tarea ya está completada: " << titulo;
+    for (auto& t : tareas) {
+        if (t.getTitulo() == titulo && t.getEstado() == "Incompleto") {
+            t.setEstado("Completada");
+            qDebug() << "Tarea marcada como completada: " << titulo;
+            return;
+        }
+    }
+    qDebug() << "No se encontró la tarea o ya está completada: " << titulo;
+}
+
+usuarioAlumno manejoCuentas::obtenerAlumnoXUser(const QString& user) {
+   usuarioAlumno h;
+    for (const auto& alumno : alumnos) {
+        if (alumno.getUser() == user) {
+            h = alumno;
+            return h;
+        }
+    }
+    return h;
+}
+
+QList<QString> manejoCuentas::obtenerClasesDeAlumno(const QString& user) {
+    QList<QString> clasesMatriculadas;
+    QString usuarioAlumno = obtenerAlumnoXUser(user).getNombre();
+    for (int i = 0; i < static_cast<int>(clases.size()); ++i) {
+        QString idClase = clases[i].getID();
+        QString rutaClase = QDir::toNativeSeparators("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/" + idClase);
+        QString nombreArchivo = QDir(rutaClase).filePath("estudiantes.clas");
+
+        if (!QDir(rutaClase).exists()) {
+            continue;
+        }
+
+        if (!QFile::exists(nombreArchivo)) {
+            continue;
+        }
+
+        QFile file(nombreArchivo);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            continue;
+        }
+
+        QTextStream in(&file);
+        QString contenido = in.readAll();
+        file.close();
+        QStringList lineas = contenido.split("\n");
+        lineas.removeAll("");
+        if (lineas.contains(usuarioAlumno)) {
+            qDebug() << "Alumno encontrado en la clase:" << clases[i].getNombre();
+            clasesMatriculadas.append(clases[i].getNombre());
+        }
+    }
+
+    return clasesMatriculadas;
+}
+
+QList<QString> manejoCuentas::obtenerExamenesDeAlumno(const QString &usuario) {
+    QList<QString> examenesDelAlumno;
+    QList<QString> clasesDelAlumno = obtenerClasesDeMaestro(usuario);
+    for (int i = 0; i < examenes.size(); ++i) {
+        for (int j = 0; j < clasesDelAlumno.size(); ++j) {
+            QString idClase = obtenerIDClaseXNombre(clasesDelAlumno[j]);
+            if (examenes[i].idClase == idClase) {
+                qDebug() << "Examen encontrado: " << examenes[i].nombreExamen;
+                examenesDelAlumno.append(examenes[i].idClase+ " - " + clasesDelAlumno[j] + " - " + examenes[i].nombreExamen);
             }
         }
     }
-    qDebug() << "No se encontró la tarea: " << titulo;
+
+    return examenesDelAlumno;
 }
 
-void manejoCuentas::restaurarTareas() {
-    if (tareasCompletadas.empty()) {
-        qDebug() << "No hay tareas completadas para restaurar.";
-        return;
+Examen manejoCuentas::obtenerExamenDesdeArchivo(const QString &datosExamen) {
+    QStringList partes = datosExamen.split(" - ");
+    if (partes.size() < 3) {
+        qDebug() << "Error: Formato incorrecto en la cadena de datos del examen.";
+        return Examen("", "", QDateTime(), 0, 0);
     }
 
-    while (!tareasCompletadas.empty()) {
-        tarea t = tareasCompletadas.top();
-        tareas.push_back(t);
-        tareasCompletadas.pop();
+    QString idClase = partes[0];
+    QString nombreExamen = partes[2];
+    QString rutaArchivo;
+    for (const auto &examen : examenes) {
+        if (examen.nombreExamen == nombreExamen && examen.idClase == idClase) {
+            rutaArchivo = examen.rutaArchivo;
+            break;
+        }
     }
 
-    qDebug() << "Tareas restauradas desde la pila.";
-    guardarTareas();
-}
+    if (rutaArchivo.isEmpty()) {
+        qDebug() << "No se encontró el examen en la lista.";
+        return Examen("", "", QDateTime(), 0, 0);
+    }
 
-void manejoCuentas::restaurarTarea(const tarea& t) {
-    tareas.push_back(t);
-    guardarTareas();
+    QFile file(rutaArchivo);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "No se pudo abrir el archivo del examen: " << rutaArchivo;
+        return Examen("", "", QDateTime(), 0, 0);
+    }
+
+    QDataStream in(&file);
+    QDateTime fechaHora;
+    int duracion, puntaje, numPreguntas;
+    QString titulo, claseID;
+
+    in >> titulo >> claseID >> fechaHora >> duracion >> puntaje >> numPreguntas;
+    qDebug() << "Leyendo examen - Duración:" << duracion;
+
+    Examen examen(titulo, claseID, fechaHora, duracion, puntaje);
+
+    for (int i = 0; i < numPreguntas; ++i) {
+        Pregunta pregunta;
+        pregunta.cargar(in);
+        examen.agregarPregunta(pregunta);
+    }
+
+    file.close();
+    qDebug() << "Examen cargado correctamente: " << examen.getIdClase() << " - " << examen.getFechaHora().toString();
+
+    return examen;
 }

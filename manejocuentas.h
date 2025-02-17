@@ -73,8 +73,12 @@ public:
     void agregarTarea(const QString& clase, const QString& titulo, const QString& descripcion, int prioridad, int tiempoEstimado, const QString& estado, const QString& tipoArchivo, const QStringList& recursos);
     std::vector<tarea>& getTareas();
     void marcarTareaComoCompletada(const QString& titulo);
-    void restaurarTareas();
-    void restaurarTarea(const tarea& t);
+
+    usuarioAlumno obtenerAlumnoXUser(const QString& user);
+    QList<QString> obtenerClasesDeAlumno(const QString& nombre);
+    QList<QString> obtenerExamenesDeAlumno(const QString& usuario);
+
+    Examen obtenerExamenDesdeArchivo(const QString &datosExamen);
 
 
 private:
@@ -84,7 +88,6 @@ private:
     std::vector<clasesPlantilla> clases;
     std::vector<ExamenInfo> examenes;
     std::vector<tarea> tareas;
-    std::stack<tarea> tareasCompletadas;
 
 
     QString archivoMaestros = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/usuarios_maestros.mad";

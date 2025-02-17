@@ -10,6 +10,7 @@
 
 class Examen {
 private:
+    QString titulo;
     QString idClase;
     QDateTime fechaHora;
     int duracion;
@@ -17,12 +18,13 @@ private:
     QVector<Pregunta> preguntas;
 
 public:
-    Examen(QString idClase, QDateTime fechaHora, int duracion, int puntaje);
+    Examen(QString titulo, QString idClase, QDateTime fechaHora, int duracion, int puntaje);
 
     void agregarPregunta(const Pregunta &pregunta);
     bool guardar();
     QDateTime getFechaHora()const;
     QString getIdClase()const;
+    QString getTitulo() const;
     int getDuracion()const;
     int getPuntaje()const;
 

@@ -23,6 +23,7 @@ public:
     manejoCuentas *manejo;
 
     QString maestro;
+    QString alumnoRegistrado;
 private slots:
     void on_pushButton_clicked();
 
@@ -114,9 +115,12 @@ private slots:
 
     void on_boton2Listas_clicked();
 
+    void on_examenesAlumnos_clicked();
+
+    void mostrarExamen(const QString& examen);
+
 private:
     Ui::MainWindow *ui;
     QVector<Pregunta> preguntas;
-    std::stack<tarea> tareasCompletadas;
 };
 #endif // MAINWINDOW_H

@@ -1,7 +1,8 @@
 #include "examen.h"
+#include <QDebug>
 
-Examen::Examen(QString idClase, QDateTime fechaHora, int duracion, int puntaje)
-    : idClase(idClase), fechaHora(fechaHora), duracion(duracion), puntaje(puntaje) {}
+Examen::Examen(QString titulo, QString idClase, QDateTime fechaHora, int duracion, int puntaje)
+    : titulo(titulo), idClase(idClase), fechaHora(fechaHora), duracion(duracion), puntaje(puntaje) {}
 
 void Examen::agregarPregunta(const Pregunta &pregunta) {
     preguntas.append(pregunta);
@@ -16,7 +17,8 @@ bool Examen::guardar() {
         return false;
 
     QDataStream out(&archivo);
-    out << fechaHora << duracion << puntaje << preguntas.size();
+    out << titulo << idClase << fechaHora << duracion << puntaje << preguntas.size();
+    qDebug() << "Guardando examen - Duración:" << duracion;
 
     for (int i = 0; i < preguntas.size(); ++i) {
         preguntas[i].guardar(out);
@@ -32,6 +34,10 @@ QDateTime Examen::getFechaHora()const {
 
 QString Examen::getIdClase()const {
     return idClase;
+}
+
+QString Examen::getTitulo()const {
+    return titulo;
 }
 
 int Examen::getDuracion()const {
