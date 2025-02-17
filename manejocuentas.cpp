@@ -213,20 +213,29 @@ void manejoCuentas::crearClase(const QString& idClase) {
 
     QString nombreArchivo = rutaClase + "/estudiantes.clas";
     QFile file(nombreArchivo);
-
     if (!file.open(QIODevice::WriteOnly)) {
         qDebug() << "No se pudo crear el archivo de estudiantes para la clase" << idClase;
         return;
     }
-
     file.close();
+
+    QString nombreArchivoAlumnos = rutaClase + "/notas.clas";
+    QFile fileAlumnos(nombreArchivoAlumnos);
+    if (!fileAlumnos.open(QIODevice::WriteOnly)) {
+        qDebug() << "No se pudo crear el archivo de alumnos para la clase" << idClase;
+        return;
+    }
+    fileAlumnos.close();
     qDebug() << "Clase creada: " << idClase << " con archivo de estudiantes.";
 }
 
 bool manejoCuentas::matricularUsuarioEnClase(const QString& idClase, const QString& usuario, bool esMaestro) {
     QString rutaClase = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/" + idClase;
     QString nombreArchivo = rutaClase + "/estudiantes.clas";
+    QString nombreArchivoAlumnos = rutaClase + "/notas.clas";
+
     QFile file(nombreArchivo);
+    QFile fileAlumnos(nombreArchivoAlumnos);
     QList<QString> lineas;
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -249,6 +258,16 @@ bool manejoCuentas::matricularUsuarioEnClase(const QString& idClase, const QStri
             return false;
         }
         lineas.append(usuario);
+
+        if (fileAlumnos.open(QIODevice::Append | QIODevice::Text)) {
+            QTextStream out(&fileAlumnos);
+            QString numeroCuenta= obtenerAlumnoXUser(usuario).getCuenta();
+            QString nombre= obtenerAlumnoXUser(usuario).getNombre();
+            out << numeroCuenta << nombre << 0 << 0 ;
+            fileAlumnos.close();
+        } else {
+            qDebug() << "No se pudo abrir el archivo de alumnos para agregar al usuario.";
+        }
     }
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream out(&file);
@@ -336,17 +355,29 @@ QList<QString> manejoCuentas::obtenerClasesDeMaestro(const QString& usuarioMaest
 
 void manejoCuentas::registrarExamen(const QString& nombreExamen, const QString& idClase, const QDateTime& fechaHora, int duracion, int puntaje, const QVector<Pregunta>& preguntas) {
     QString rutaArchivo = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/" + idClase + "/" + fechaHora.toString("yyyyMMdd_HHmm") + ".exam";
-
+    int contadorExamenes = 0;
+    for (const auto& examen : examenes) {
+        if (examen.idClase == idClase) {
+            contadorExamenes++;
+        }
+    }
+    if (contadorExamenes >= 2) {
+        QMessageBox::warning(nullptr, "Error", "Ya existen dos exámenes para la clase: " + idClase + ". No se puede crear otro.");
+        return;
+    }
     Examen examen(nombreExamen, idClase, fechaHora, duracion, puntaje);
     for (const auto& pregunta : preguntas) {
         examen.agregarPregunta(pregunta);
     }
+
     if (!examen.guardar()) {
         qDebug() << "Error al guardar el examen en:" << rutaArchivo;
         return;
     }
+
     examenes.push_back({nombreExamen, idClase, rutaArchivo});
 }
+
 
 void manejoCuentas::cargarExamenes() {
     QFile file("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/examenes.gen");
@@ -589,6 +620,7 @@ Examen manejoCuentas::obtenerExamenDesdeArchivo(const QString &datosExamen) {
     for (int i = 0; i < numPreguntas; ++i) {
         Pregunta pregunta;
         pregunta.cargar(in);
+        qDebug() << "Cargando pregunta " << i + 1 << ": " << pregunta.obtenerTexto();
         examen.agregarPregunta(pregunta);
     }
 
@@ -596,4 +628,39 @@ Examen manejoCuentas::obtenerExamenDesdeArchivo(const QString &datosExamen) {
     qDebug() << "Examen cargado correctamente: " << examen.getIdClase() << " - " << examen.getFechaHora().toString();
 
     return examen;
+}
+
+void manejoCuentas::actualizarNotas(const QString& idClase, const QString& numeroCuenta, double nota) {
+    QString rutaClase = "C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/clases/" + idClase;
+    QString nombreArchivoAlumnos = rutaClase + "/notas.clas";
+    QFile file(nombreArchivoAlumnos);
+    QList<QString> lineas;
+
+    // Leer el archivo de notas
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&file);
+        QString numeroCuentaArchivo, nombreArchivo;
+        double nota1Archivo, nota2Archivo;
+
+        while (!in.atEnd()) {
+            in >> numeroCuentaArchivo >> nombreArchivo >> nota1Archivo >> nota2Archivo;
+            if (numeroCuentaArchivo == numeroCuenta) {
+                if (nota1Archivo == 0) {
+                    nota1Archivo = nota;
+                } else {
+                    nota2Archivo = nota;
+                }
+            }
+            lineas.append(numeroCuentaArchivo + " " + nombreArchivo + " " + QString::number(nota1Archivo) + " " + QString::number(nota2Archivo));
+        }
+        file.close();
+    }
+
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        for (const QString& linea : lineas) {
+            out << linea << "\n";
+        }
+        file.close();
+    }
 }

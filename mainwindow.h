@@ -119,6 +119,16 @@ private slots:
 
     void mostrarExamen(const QString& examen);
 
+    QWidget* mostrarPregunta(const Pregunta &pregunta);
+
+    bool examenYaRealizado(const QString& idClase, const QString& idExamen, const QString& usuario);
+
+    void registrarExamenRealizado(const QString& idClase, const QString& idExamen, const QString& usuario);
+
+    void on_responderExamen_clicked();
+
+    void on_verResultadosExamen_clicked();
+
 private:
     Ui::MainWindow *ui;
     QVector<Pregunta> preguntas;

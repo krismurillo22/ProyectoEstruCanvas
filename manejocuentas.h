@@ -79,6 +79,7 @@ public:
     QList<QString> obtenerExamenesDeAlumno(const QString& usuario);
 
     Examen obtenerExamenDesdeArchivo(const QString &datosExamen);
+    void actualizarNotas(const QString& idClase, const QString& numeroCuenta, double nota);
 
 
 private:

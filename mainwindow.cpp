@@ -12,6 +12,7 @@
 #include <QTimer>
 #include <QThread>
 #include <QVBoxLayout>
+#include <QRadioButton>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -1366,4 +1367,172 @@ void MainWindow::mostrarExamen(const QString& datosExamen) {
     ui->labelClase->setText(examen.getIdClase());
     ui->dateTimeExamen->setDateTime(examen.getFechaHora());
 
+    if(!examenYaRealizado(examen.getIdClase(), examen.getFechaHora().toString("yyyyMMdd_HHmm"), alumnoRegistrado)){
+        QWidget *contenedorTodasLasPreguntas = new QWidget();
+        QVBoxLayout *layoutPreguntas = new QVBoxLayout(contenedorTodasLasPreguntas);
+        layoutPreguntas->setAlignment(Qt::AlignTop);
+
+        for (const Pregunta &pregunta : examen.getPreguntas()) {
+            QWidget *contenedorPregunta = mostrarPregunta(pregunta);
+            layoutPreguntas->addWidget(contenedorPregunta);
+        }
+        layoutPreguntas->addStretch();
+
+        ui->scrollAreaPreguntas->setWidget(contenedorTodasLasPreguntas);
+        ui->scrollAreaPreguntas->setWidgetResizable(true);
+    }else{
+        QMessageBox::warning(this, "Error", "Ya realizaste este examen.");
+    }
 }
+
+QWidget* MainWindow::mostrarPregunta(const Pregunta &pregunta) {
+    QWidget *contenedorPregunta = new QWidget();
+    QVBoxLayout *layoutPregunta = new QVBoxLayout(contenedorPregunta);
+
+    layoutPregunta->setAlignment(Qt::AlignTop);
+
+    QLabel *labelPregunta = new QLabel(pregunta.obtenerTexto(), contenedorPregunta);
+    labelPregunta->setStyleSheet("font-size: 18px; font-weight: bold;"); // Aumentar tamaño de pregunta
+    layoutPregunta->addWidget(labelPregunta);
+
+    switch (pregunta.obtenerTipo()) {
+        case 0: {  // Verdadero/Falso
+            QComboBox *comboBox = new QComboBox(contenedorPregunta);
+            comboBox->addItem("Verdadero");
+            comboBox->addItem("Falso");
+            comboBox->setFixedWidth(300);
+            comboBox->setStyleSheet("font-size: 16px;"); // Aumentar tamaño de texto
+            layoutPregunta->addWidget(comboBox);
+            break;
+        }
+        case 1: {  // Selección Múltiple
+            QVBoxLayout *opcionesLayout = new QVBoxLayout();
+
+            QRadioButton *radioBtnCorrecto = new QRadioButton(pregunta.obtenerRespuestaCorrecta(), contenedorPregunta);
+            radioBtnCorrecto->setStyleSheet("font-size: 16px;"); // Aumentar tamaño de respuesta
+            opcionesLayout->addWidget(radioBtnCorrecto);
+
+            QStringList opcionesIncorrectas = pregunta.obtenerRespuestaIncorrecta().split(",");
+            for (const QString &opcion : opcionesIncorrectas) {
+                QRadioButton *radioBtnIncorrecto = new QRadioButton(opcion.trimmed(), contenedorPregunta);
+                radioBtnIncorrecto->setStyleSheet("font-size: 16px;"); // Aumentar tamaño de respuesta
+                opcionesLayout->addWidget(radioBtnIncorrecto);
+            }
+
+            layoutPregunta->addLayout(opcionesLayout);
+            break;
+        }
+        case 2: {  // Enumeradas
+            QLineEdit *lineEdit = new QLineEdit(contenedorPregunta);
+            lineEdit->setFixedWidth(300);
+            lineEdit->setStyleSheet("font-size: 16px;"); // Aumentar tamaño de texto en input
+            layoutPregunta->addWidget(lineEdit);
+            break;
+        }
+        default:
+            qDebug() << "Tipo de pregunta no reconocido.";
+    }
+
+    contenedorPregunta->setMinimumSize(400, 100);
+    return contenedorPregunta;
+}
+
+bool MainWindow::examenYaRealizado(const QString& idClase, const QString& nombreFile, const QString& usuario) {
+    QFile file("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/examenes_realizados.gen");
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&file);
+        while (!in.atEnd()) {
+            QString linea = in.readLine();
+            QStringList datos = linea.split("|");
+            if (datos.size() == 3 && datos[0] == idClase && datos[1] == nombreFile && datos[2] == usuario) {
+                file.close();
+                return true; // El usuario ya hizo este examen
+            }
+        }
+        file.close();
+    }
+    return false;
+}
+
+void MainWindow::registrarExamenRealizado(const QString& idClase, const QString& nombreFile, const QString& usuario) {
+    QFile file("C:/Users/avril/Desktop/Proyectos/ProyectoEstruCanvas/archivos/examenes_realizados.gen");
+    if (file.open(QIODevice::Append | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << idClase << "|" << nombreFile << "|" << usuario << "\n";
+        file.close();
+    } else {
+        qDebug() << "Error al abrir el archivo de exámenes realizados.";
+    }
+}
+
+void MainWindow::on_responderExamen_clicked() {
+    QString idClase = ui->labelClase->text();
+    QString nombreFile = ui->dateTimeExamen->dateTime().toString("yyyyMMdd_HHmm");
+    QString usuario = alumnoRegistrado;
+
+    if (examenYaRealizado(idClase, nombreFile, usuario)) {
+        QMessageBox::warning(this, "Error", "Ya realizaste este examen.");
+        return;
+    }
+
+    Examen examen = manejo->obtenerExamenDesdeArchivo(nombreFile);
+    if (examen.getTitulo().isEmpty()) {
+        QMessageBox::warning(this, "Error", "No se pudo cargar el examen.");
+        return;
+    }
+
+    int puntajeTotal = examen.getPuntaje();
+    int puntajeObtenido = 0;
+    int totalPreguntas = examen.getPreguntas().size();
+
+    QWidget *contenedorPreguntas = ui->scrollAreaPreguntas->widget();
+    QList<QWidget*> preguntasWidgets = contenedorPreguntas->findChildren<QWidget*>();
+
+    int index = 0;
+    for (const Pregunta &pregunta : examen.getPreguntas()) {
+        if (index >= preguntasWidgets.size()) break;
+
+        QWidget *preguntaWidget = preguntasWidgets[index];
+        index++;
+
+        switch (pregunta.obtenerTipo()) {
+            case 0: { // Verdadero/Falso
+                QComboBox *comboBox = preguntaWidget->findChild<QComboBox*>();
+                if (comboBox && comboBox->currentText() == pregunta.obtenerRespuestaCorrecta()) {
+                    puntajeObtenido++;
+                }
+                break;
+            }
+            case 1: { // Selección Múltiple
+                QList<QRadioButton*> radios = preguntaWidget->findChildren<QRadioButton*>();
+                for (QRadioButton *radio : radios) {
+                    if (radio->isChecked() && radio->text() == pregunta.obtenerRespuestaCorrecta()) {
+                        puntajeObtenido++;
+                        break;
+                    }
+                }
+                break;
+            }
+            case 2: { // Enumeradas (respuesta escrita)
+                QLineEdit *lineEdit = preguntaWidget->findChild<QLineEdit*>();
+                if (lineEdit && lineEdit->text().trimmed().toLower() == pregunta.obtenerRespuestaCorrecta().trimmed().toLower()) {
+                    puntajeObtenido++;
+                }
+                break;
+            }
+        }
+    }
+    double notaFinal = (static_cast<double>(puntajeObtenido) / totalPreguntas) * puntajeTotal;
+    registrarExamenRealizado(idClase, nombreFile, usuario);
+    manejo->actualizarNotas(idClase, usuario, notaFinal);
+
+    QMessageBox::information(this, "Examen Finalizado", "Tu calificación es: " + QString::number(notaFinal, 'f', 2));
+}
+
+
+
+void MainWindow::on_verResultadosExamen_clicked()
+{
+
+}
+

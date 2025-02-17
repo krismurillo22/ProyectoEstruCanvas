@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="ingresar">
      <widget class="QLabel" name="label">
@@ -1668,7 +1668,7 @@ border: none;</string>
        </rect>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page_11"/>
       <widget class="QWidget" name="page_12">
@@ -2567,7 +2567,7 @@ font: 87 14pt &quot;Segoe UI&quot;;</string>
          <rect>
           <x>780</x>
           <y>50</y>
-          <width>131</width>
+          <width>51</width>
           <height>41</height>
          </rect>
         </property>
@@ -2582,14 +2582,17 @@ font: 87 14pt &quot;Segoe UI&quot;;</string>
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
         </property>
        </widget>
-       <widget class="QScrollArea" name="scrollArea_2">
+       <widget class="QScrollArea" name="scrollAreaPreguntas">
         <property name="geometry">
          <rect>
-          <x>20</x>
+          <x>100</x>
           <y>150</y>
-          <width>961</width>
+          <width>800</width>
           <height>511</height>
          </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 255, 255);</string>
         </property>
         <property name="widgetResizable">
          <bool>true</bool>
@@ -2599,7 +2602,7 @@ font: 87 14pt &quot;Segoe UI&quot;;</string>
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>959</width>
+           <width>798</width>
            <height>509</height>
           </rect>
          </property>
@@ -2667,6 +2670,82 @@ font: 87 12pt &quot;Segoe UI&quot;;</string>
           <month>2</month>
           <day>1</day>
          </datetime>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="responderExamen">
+        <property name="geometry">
+         <rect>
+          <x>640</x>
+          <y>680</y>
+          <width>262</width>
+          <height>61</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(6, 6, 92);
+color: white;
+font: 75 14pt &quot;Segoe UI&quot;;</string>
+        </property>
+        <property name="text">
+         <string>RESPONDER</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="labelDuracion_2">
+        <property name="geometry">
+         <rect>
+          <x>840</x>
+          <y>50</y>
+          <width>131</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(8, 19, 110);
+font: 87 14pt &quot;Segoe UI&quot;;</string>
+        </property>
+        <property name="text">
+         <string>horas</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="verResultadosExamen">
+        <property name="geometry">
+         <rect>
+          <x>100</x>
+          <y>680</y>
+          <width>262</width>
+          <height>61</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(6, 6, 92);
+color: white;
+font: 75 14pt &quot;Segoe UI&quot;;</string>
+        </property>
+        <property name="text">
+         <string>VER RESULTADOS</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="tituloDeListaTarea_9">
+        <property name="geometry">
+         <rect>
+          <x>260</x>
+          <y>90</y>
+          <width>81</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(8, 19, 110);
+font: 87 14pt &quot;Segoe UI Black&quot;;</string>
+        </property>
+        <property name="text">
+         <string>NOTA:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
         </property>
        </widget>
       </widget>
@@ -2746,6 +2825,9 @@ font: 87 16pt &quot;Segoe UI Black&quot;;</string>
         <height>441</height>
        </rect>
       </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(255, 255, 255);</string>
+      </property>
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
@@ -2798,6 +2880,112 @@ border: none;</string>
    </widget>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>usuario</tabstop>
+  <tabstop>password</tabstop>
+  <tabstop>cerrarRegistro</tabstop>
+  <tabstop>dateTimeExamen</tabstop>
+  <tabstop>registrarMaestro</tabstop>
+  <tabstop>registrarAlumnos</tabstop>
+  <tabstop>agregarMaestro</tabstop>
+  <tabstop>modificarMaestro</tabstop>
+  <tabstop>eliminarMaestro</tabstop>
+  <tabstop>agregarAlumno</tabstop>
+  <tabstop>modificarAlumno</tabstop>
+  <tabstop>eliminarAlumno</tabstop>
+  <tabstop>eliminarClase</tabstop>
+  <tabstop>modificarClase</tabstop>
+  <tabstop>agregarClase</tabstop>
+  <tabstop>AsignarMaestro</tabstop>
+  <tabstop>matricularAlumnos</tabstop>
+  <tabstop>agregarRegistro</tabstop>
+  <tabstop>modificarRegistro</tabstop>
+  <tabstop>eliminarRegistro</tabstop>
+  <tabstop>idMaestro</tabstop>
+  <tabstop>rolMaestro</tabstop>
+  <tabstop>nombreMaestro</tabstop>
+  <tabstop>profesionMaestro</tabstop>
+  <tabstop>sueldoMaestro</tabstop>
+  <tabstop>userMaestro</tabstop>
+  <tabstop>passwordMaestro</tabstop>
+  <tabstop>aceptarMaestro</tabstop>
+  <tabstop>nombreRegistro</tabstop>
+  <tabstop>passwordRegistro</tabstop>
+  <tabstop>userRegistro</tabstop>
+  <tabstop>aceptarRegistro</tabstop>
+  <tabstop>aceptarAlumnos</tabstop>
+  <tabstop>cuentaAlumnos</tabstop>
+  <tabstop>rolAlumnos</tabstop>
+  <tabstop>nombreAlumno</tabstop>
+  <tabstop>carreraAlumnos</tabstop>
+  <tabstop>clasesAlumnos</tabstop>
+  <tabstop>usuarioAlumnos</tabstop>
+  <tabstop>passwordAlumnos</tabstop>
+  <tabstop>aceptarClases</tabstop>
+  <tabstop>nombreClases</tabstop>
+  <tabstop>idClases</tabstop>
+  <tabstop>semestreClases</tabstop>
+  <tabstop>yearClases</tabstop>
+  <tabstop>periodoClases</tabstop>
+  <tabstop>uvClases</tabstop>
+  <tabstop>horaComboBox</tabstop>
+  <tabstop>aceptarMatricula</tabstop>
+  <tabstop>alumnoCombobox</tabstop>
+  <tabstop>claseMatricularCombo</tabstop>
+  <tabstop>aceptarAsignacion</tabstop>
+  <tabstop>claseComboBox</tabstop>
+  <tabstop>maestroComboBox</tabstop>
+  <tabstop>registrarClases</tabstop>
+  <tabstop>registrarRegistro</tabstop>
+  <tabstop>registrarAsignar_2</tabstop>
+  <tabstop>cerrarMaestro</tabstop>
+  <tabstop>modificarExamen</tabstop>
+  <tabstop>nuevoExamen</tabstop>
+  <tabstop>eliminarExamen</tabstop>
+  <tabstop>verResultados</tabstop>
+  <tabstop>cuadroDeNotas</tabstop>
+  <tabstop>nuevaTarea</tabstop>
+  <tabstop>tareasPendientes</tabstop>
+  <tabstop>eliminarTareas</tabstop>
+  <tabstop>ordenarTareas</tabstop>
+  <tabstop>ejecutarTareas</tabstop>
+  <tabstop>examenesMaestro</tabstop>
+  <tabstop>tareasMaestro</tabstop>
+  <tabstop>claseCombo</tabstop>
+  <tabstop>crearExamen</tabstop>
+  <tabstop>agregarPregunta</tabstop>
+  <tabstop>tipoPreguntaCombo</tabstop>
+  <tabstop>horaInicio</tabstop>
+  <tabstop>comboBoxDuracion</tabstop>
+  <tabstop>valorExamen</tabstop>
+  <tabstop>preguntas</tabstop>
+  <tabstop>pregunta</tabstop>
+  <tabstop>respuestaCorrecta</tabstop>
+  <tabstop>respuestasIncorrectas</tabstop>
+  <tabstop>respuestaCorrecta_2</tabstop>
+  <tabstop>comboClasetarea</tabstop>
+  <tabstop>comboPrioridad</tabstop>
+  <tabstop>tiempoInicio</tabstop>
+  <tabstop>tiempoFinalizacion</tabstop>
+  <tabstop>descripciontarea</tabstop>
+  <tabstop>estadoTarea</tabstop>
+  <tabstop>comboBox_2</tabstop>
+  <tabstop>crearTarea</tabstop>
+  <tabstop>agregarRecursos</tabstop>
+  <tabstop>tituloTarea</tabstop>
+  <tabstop>textorecursos</tabstop>
+  <tabstop>textEditPendiente</tabstop>
+  <tabstop>boton1Tareas</tabstop>
+  <tabstop>boton2Listas</tabstop>
+  <tabstop>cerrarAlumno</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>examenesAlumnos</tabstop>
+  <tabstop>clasesAlumnosbtn</tabstop>
+  <tabstop>tituloExamen</tabstop>
+  <tabstop>scrollAreaPreguntas</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>responderExamen</tabstop>
+ </tabstops>
  <resources>
   <include location="imagenes.qrc"/>
  </resources>
